@@ -66,13 +66,13 @@ const Footer = () => {
               </div>
               <div className="flex items-center">
                 <Phone className="h-4 w-4 mr-2" />
-                <a href="tel:+1-555-0123" style={{ color: '#fff' }} className="hover:underline">
-                  +1 (555) 012-3456
+                <a href="tel:+8801620929190" style={{ color: '#fff' }} className="hover:underline">
+                  +880 1620-929190
                 </a>
               </div>
               <div className="flex items-center">
                 <MapPin className="h-4 w-4 mr-2" />
-                <span>San Francisco, CA</span>
+                <span>Dhaka, Bangladesh</span>
               </div>
             </div>
           </div>
