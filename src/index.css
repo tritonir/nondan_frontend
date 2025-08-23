@@ -1,60 +1,43 @@
-@import "tailwindcss";
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Design System Colors */
+/* CSS Variables for Theme */
 :root {
-  /* Platform Level Colors (Default) */
-  --primary-dark: #000000;
   --primary-accent-1: #CF0F47;
   --primary-accent-2: #FF0B55;
-  --soft-background: #FFDEDE;
-
-  /* Light Mode */
-  --bg-light: #FFFFFF;
-  --text-light: #000000;
-  --card-light: #F8F9FA;
-
-  /* Dark Mode */
-  --bg-dark: #000000;
-  --text-dark: #FFFFFF;
-  --card-dark: #1A1A1A;
-
-  /* Club Theme Variables (Dynamic) */
-  --club-primary: var(--primary-accent-1);
-  --club-secondary: var(--primary-accent-2);
+  --primary-text: #000000;
+  --primary-muted: #6B7280;
+  --primary-bg: #FFFFFF;
+  --color-gray-900: #111827;
 }
 
-/* Dark mode styles */
 .dark {
-  background-color: var(--bg-dark);
-  color: var(--text-dark);
+  --primary-text: #FFFFFF;
+  --primary-muted: #9CA3AF;
+  --primary-bg: #1F2937;
 }
 
-/* Club themed components */
-.club-themed {
-  --primary-accent-1: var(--club-primary);
-  --primary-accent-2: var(--club-secondary);
-}
-
-/* Custom component styles */
+/* Custom Component Styles */
 @layer components {
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700;
+  }
+
   .btn-primary {
-    @apply bg-[var(--primary-accent-1)] hover:bg-[var(--primary-accent-2)] text-white font-medium py-2 px-4 rounded-lg transition-colors;
+    background: var(--primary-accent-1);
+    border-color: var(--primary-accent-1);
+    @apply text-white hover:opacity-90 active:scale-95;
   }
 
   .btn-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg transition-colors;
+    @apply bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700;
   }
 
   .btn-outline {
-    @apply border-2 border-[var(--primary-accent-1)] text-[var(--primary-accent-1)] hover:bg-[var(--primary-accent-1)] hover:text-white font-medium py-2 px-4 rounded-lg transition-colors;
-  }
-
-  .card {
-    @apply bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700;
+    @apply bg-transparent border-2 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800;
+    border-color: var(--primary-accent-1);
+    color: var(--primary-accent-1);
   }
 
   .nav-link {
@@ -62,34 +45,156 @@
   }
 
   .nav-link-active {
-    @apply text-gray-900 dark:text-white font-medium;
+    @apply text-white font-medium;
+    background: var(--primary-accent-1);
+  }
+
+  /* Utility classes for line clamping */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Focus styles */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+    --tw-ring-color: var(--primary-accent-1);
+  }
+
+  /* Animations */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.2s ease-out;
   }
 }
 
-/* Scrollbar styling */
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  @apply bg-gray-100 dark:bg-gray-800;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e0;
-  border-radius: 3px;
+  @apply bg-gray-400 dark:bg-gray-600 rounded-full;
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: #4a5568;
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500 dark:bg-gray-500;
 }
 
-/* Animation utilities */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Glass effect */
+.glass {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.8);
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out;
+.dark .glass {
+  background: rgba(17, 24, 39, 0.8);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary-accent-1), var(--primary-accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom badge styles */
+.badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.badge-primary {
+  background: var(--primary-accent-1);
+  @apply text-white;
+}
+
+.badge-secondary {
+  @apply bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300;
+}
+
+.badge-success {
+  @apply bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300;
+}
+
+.badge-warning {
+  @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300;
+}
+
+.badge-danger {
+  @apply bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* Responsive typography */
+@media (max-width: 640px) {
+  h1 {
+    @apply text-2xl;
+  }
+
+  h2 {
+    @apply text-xl;
+  }
+
+  h3 {
+    @apply text-lg;
+  }
 }
