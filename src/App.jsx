@@ -13,7 +13,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 // Lazy load pages for better performance
 const Home = lazy(() => import('./pages/home'));
 const AuthPage = lazy(() => import('./pages/AuthPage'));
-const ExplorePage = lazy(() => import('./pages/ExplorePage'));
+const EventsPage = lazy(() => import('./pages/EventsPage'));
 const ClubsPage = lazy(() => import('./pages/ClubsPage'));
 const ClubDetailPage = lazy(() => import('./pages/ClubDetailPage'));
 const EventDetailPage = lazy(() => import('./pages/EventDetailPage'));
@@ -66,7 +66,7 @@ const PublicRoute = ({ children }) => {
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/explore" replace />;
+    return <Navigate to="/events" replace />;
   }
 
   return children;
@@ -84,7 +84,7 @@ const App = () => {
               <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<Home />} />
-                <Route path="/explore" element={<ExplorePage />} />
+                <Route path="/events" element={<EventsPage />} />
                 <Route path="/clubs" element={<ClubsPage />} />
                 <Route path="/blog" element={<BlogPage />} />
                 <Route path="/club/:id" element={<ClubDetailPage />} />

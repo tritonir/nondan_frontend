@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import SearchBar from '../components/ui/SearchBar';
 import EventCard from '../components/EventCard';
-import ClubCard from '../components/ClubCard';
 import Button from '../components/ui/Button';
-import Badge from '../components/ui/Badge';
 
-const ExplorePage = () => {
-  const [activeTab, setActiveTab] = useState('events');
+const EventsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [viewMode, setViewMode] = useState('grid');
@@ -84,56 +81,13 @@ const ExplorePage = () => {
     }
   ];
 
-  const clubs = [
-    {
-      id: 'tech-club',
-      name: 'Technology Club',
-      description: 'Exploring the latest in technology, programming, and innovation. Join us for workshops, hackathons, and tech talks.',
-      category: 'Technology',
-      memberCount: 1250,
-      eventCount: 24,
-      colors: { primary: '#3B82F6', secondary: '#1D4ED8' },
-      recentEvents: [
-        { title: 'React Workshop' },
-        { title: 'AI Symposium' }
-      ]
-    },
-    {
-      id: 'sports-club',
-      name: 'Sports Club',
-      description: 'Promoting fitness, teamwork, and sportsmanship through various athletic activities and competitions.',
-      category: 'Sports',
-      memberCount: 800,
-      eventCount: 18,
-      colors: { primary: '#10B981', secondary: '#059669' },
-      recentEvents: [
-        { title: 'Basketball Tournament' },
-        { title: 'Marathon Training' }
-      ]
-    },
-    {
-      id: 'art-society',
-      name: 'Art Society',
-      description: 'A creative community for artists, designers, and art enthusiasts to share, learn, and grow together.',
-      category: 'Arts',
-      memberCount: 450,
-      eventCount: 12,
-      colors: { primary: '#F59E0B', secondary: '#D97706' },
-      recentEvents: [
-        { title: 'Photography Workshop' },
-        { title: 'Digital Art Contest' }
-      ]
-    }
-  ];
-
   const categories = ['all', 'technology', 'sports', 'arts', 'academic', 'social'];
 
-  const filteredData = (activeTab === 'events' ? events : clubs).filter(item => {
-    const matchesSearch = item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         item.description?.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredEvents = events.filter(event => {
+    const matchesSearch = event.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         event.description?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'all' ||
-                           item.category?.toLowerCase() === selectedCategory;
+                           event.category?.toLowerCase() === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -142,16 +96,16 @@ const ExplorePage = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Explore</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Events</h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Discover events and clubs that match your interests
+            Discover upcoming events that match your interests
           </p>
         </div>
 
         {/* Search and Filters */}
         <div className="mb-8 space-y-4">
           <SearchBar
-            placeholder={`Search ${activeTab}...`}
+            placeholder="Search events..."
             onSearch={setSearchQuery}
             className="max-w-2xl"
           />
@@ -174,29 +128,12 @@ const ExplorePage = () => {
           </div>
         </div>
 
-        {/* Tabs and View Controls */}
+        {/* View Controls */}
         <div className="flex justify-between items-center mb-6">
-          <div className="flex space-x-1 bg-white dark:bg-gray-800 rounded-lg p-1">
-            <button
-              onClick={() => setActiveTab('events')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                activeTab === 'events'
-                  ? 'bg-[var(--primary-accent-1)] text-white'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
-            >
-              Events ({events.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('clubs')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                activeTab === 'clubs'
-                  ? 'bg-[var(--primary-accent-1)] text-white'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
-            >
-              Clubs ({clubs.length})
-            </button>
+          <div className="flex items-center space-x-4">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              All Events ({events.length})
+            </h2>
           </div>
 
           {/* View Mode Toggle */}
@@ -231,25 +168,21 @@ const ExplorePage = () => {
         {/* Results */}
         <div className="mb-4">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Showing {filteredData.length} {activeTab}
+            Showing {filteredEvents.length} events
             {selectedCategory !== 'all' && ` in ${selectedCategory}`}
             {searchQuery && ` matching "${searchQuery}"`}
           </p>
         </div>
 
-        {/* Content Grid/List */}
-        {filteredData.length > 0 ? (
+        {/* Events Grid/List */}
+        {filteredEvents.length > 0 ? (
           <div className={`grid gap-6 ${
             viewMode === 'grid' 
               ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' 
               : 'grid-cols-1'
           }`}>
-            {filteredData.map(item => (
-              activeTab === 'events' ? (
-                <EventCard key={item.id} event={item} />
-              ) : (
-                <ClubCard key={item.id} club={item} />
-              )
+            {filteredEvents.map(event => (
+              <EventCard key={event.id} event={event} />
             ))}
           </div>
         ) : (
@@ -260,7 +193,7 @@ const ExplorePage = () => {
               </svg>
             </div>
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-              No {activeTab} found
+              No events found
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               Try adjusting your search criteria or browse different categories.
@@ -281,4 +214,4 @@ const ExplorePage = () => {
   );
 };
 
-export default ExplorePage;
+export default EventsPage;
