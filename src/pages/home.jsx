@@ -47,14 +47,16 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10"></div>
+      <section className="relative overflow-hidden bg-gradient-to-br from-pink-50 via-white to-red-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <div className="absolute inset-0" style={{
+          background: 'linear-gradient(135deg, rgba(207, 15, 71, 0.1), rgba(255, 11, 85, 0.1))'
+        }}></div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="text-center lg:text-left">
               <div className="flex items-center justify-center lg:justify-start mb-6">
-                <Sparkles className="w-8 h-8 text-yellow-500 mr-2" />
+                <Sparkles className="w-8 h-8 mr-2" style={{ color: 'var(--primary-accent-2)' }} />
                 <span className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
                   Campus Life Platform
                 </span>
@@ -62,7 +64,12 @@ const Home = () => {
 
               <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
                 Discover Amazing
-                <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="block" style={{
+                  background: 'linear-gradient(135deg, var(--primary-accent-1), var(--primary-accent-2))',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent'
+                }}>
                   Events & Communities
                 </span>
               </h1>
@@ -112,8 +119,11 @@ const Home = () => {
 
               {/* Welcome back message for authenticated users */}
               {isAuthenticated && (
-                <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <p className="text-blue-800 dark:text-blue-200">
+                <div className="mt-8 p-4 rounded-lg border" style={{
+                  backgroundColor: 'rgba(207, 15, 71, 0.1)',
+                  borderColor: 'var(--primary-accent-1)'
+                }}>
+                  <p style={{ color: 'var(--primary-accent-1)' }}>
                     Welcome back, <span className="font-semibold">{user.name}</span>!
                     Ready to discover new opportunities?
                   </p>
@@ -126,7 +136,7 @@ const Home = () => {
                 <div className="space-y-4">
                   <Card hover className="transform rotate-3">
                     <div className="text-center">
-                      <Calendar className="w-8 h-8 mx-auto mb-2 text-blue-600" />
+                      <Calendar className="w-8 h-8 mx-auto mb-2" style={{ color: 'var(--primary-accent-1)' }} />
                       <h3 className="font-semibold text-gray-900 dark:text-white">Tech Summit</h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">150 attending</p>
                     </div>
@@ -134,7 +144,7 @@ const Home = () => {
 
                   <Card hover className="transform -rotate-2">
                     <div className="text-center">
-                      <Users className="w-8 h-8 mx-auto mb-2 text-green-600" />
+                      <Users className="w-8 h-8 mx-auto mb-2" style={{ color: 'var(--primary-accent-2)' }} />
                       <h3 className="font-semibold text-gray-900 dark:text-white">Art Club</h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">540 members</p>
                     </div>
@@ -144,7 +154,7 @@ const Home = () => {
                 <div className="space-y-4 mt-8">
                   <Card hover className="transform -rotate-1">
                     <div className="text-center">
-                      <Award className="w-8 h-8 mx-auto mb-2 text-purple-600" />
+                      <Award className="w-8 h-8 mx-auto mb-2" style={{ color: 'var(--primary-accent-1)' }} />
                       <h3 className="font-semibold text-gray-900 dark:text-white">Certificates</h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">Earn & Track</p>
                     </div>
@@ -152,7 +162,7 @@ const Home = () => {
 
                   <Card hover className="transform rotate-2">
                     <div className="text-center">
-                      <Globe className="w-8 h-8 mx-auto mb-2 text-orange-600" />
+                      <Globe className="w-8 h-8 mx-auto mb-2" style={{ color: 'var(--primary-accent-2)' }} />
                       <h3 className="font-semibold text-gray-900 dark:text-white">Global Network</h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">Connect worldwide</p>
                     </div>
@@ -173,8 +183,12 @@ const Home = () => {
               return (
                 <div key={index} className="text-center">
                   <div className="flex justify-center mb-4">
-                    <div className="p-3 bg-gray-100 dark:bg-gray-700 rounded-full">
-                      <Icon className={`w-6 h-6 ${stat.color}`} />
+                    <div className="p-3 rounded-full" style={{
+                      backgroundColor: index % 2 === 0 ? 'rgba(207, 15, 71, 0.1)' : 'rgba(255, 11, 85, 0.1)'
+                    }}>
+                      <Icon className="w-6 h-6" style={{
+                        color: index % 2 === 0 ? 'var(--primary-accent-1)' : 'var(--primary-accent-2)'
+                      }} />
                     </div>
                   </div>
                   <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
@@ -207,8 +221,10 @@ const Home = () => {
               const Icon = feature.icon;
               return (
                 <Card key={index} hover onClick={feature.action} className="text-center cursor-pointer">
-                  <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-full w-fit mx-auto mb-4">
-                    <Icon className="w-8 h-8 text-blue-600" />
+                  <div className="p-3 rounded-full w-fit mx-auto mb-4" style={{
+                    backgroundColor: 'rgba(207, 15, 71, 0.1)'
+                  }}>
+                    <Icon className="w-8 h-8" style={{ color: 'var(--primary-accent-1)' }} />
                   </div>
                   <CardTitle className="mb-3">{feature.title}</CardTitle>
                   <CardDescription className="mb-4">{feature.description}</CardDescription>
@@ -278,12 +294,14 @@ const Home = () => {
 
       {/* CTA Section */}
       {!isAuthenticated && (
-        <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+        <section className="py-20" style={{
+          background: 'linear-gradient(135deg, var(--primary-accent-1), var(--primary-accent-2))'
+        }}>
           <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
               Ready to Start Your Journey?
             </h2>
-            <p className="text-xl text-blue-100 mb-8">
+            <p className="text-xl text-pink-100 mb-8">
               Join thousands of students who are already making the most of their campus experience.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -297,7 +315,8 @@ const Home = () => {
               <Button
                 size="lg"
                 variant="outline"
-                className="text-white border-white hover:bg-white hover:text-blue-600"
+                className="text-white border-white hover:bg-white"
+                style={{ '--hover-text-color': 'var(--primary-accent-1)' }}
                 onClick={() => navigate('/auth/login')}
               >
                 Sign In

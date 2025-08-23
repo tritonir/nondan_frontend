@@ -18,6 +18,7 @@ const ExplorePage = lazy(() => import('./pages/ExplorePage'));
 const ClubsPage = lazy(() => import('./pages/ClubsPage'));
 const ClubDetailPage = lazy(() => import('./pages/ClubDetailPage'));
 const EventDetailPage = lazy(() => import('./pages/EventDetailPage'));
+const BlogPage = lazy(() => import('./pages/BlogPage'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Theme = lazy(() => import('./pages/Theme'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -88,6 +89,7 @@ const App = () => {
                   <Route path="/" element={<Home />} />
                   <Route path="/explore" element={<ExplorePage />} />
                   <Route path="/clubs" element={<ClubsPage />} />
+                  <Route path="/blog" element={<BlogPage />} />
                   <Route path="/club/:id" element={<ClubDetailPage />} />
                   <Route path="/event/:id" element={<EventDetailPage />} />
                   <Route path="/theme" element={<Theme />} />

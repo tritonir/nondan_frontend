@@ -16,7 +16,8 @@ import {
   Home,
   Compass,
   Users,
-  Calendar
+  Calendar,
+  BookOpen
 } from 'lucide-react';
 import Button from './ui/Button';
 import Avatar from './ui/Avatar';
@@ -58,6 +59,7 @@ const Navbar = () => {
     { to: '/', label: 'Home', icon: Home },
     { to: '/explore', label: 'Explore', icon: Compass },
     { to: '/clubs', label: 'Clubs', icon: Users },
+    { to: '/blog', label: 'Blog', icon: BookOpen },
     ...(isAuthenticated ? [
       {
         to: user?.role === 'admin' ? '/admin/dashboard' : '/student/dashboard',
