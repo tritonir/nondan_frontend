@@ -6,23 +6,6 @@
 
 A modern, responsive frontend application for the Nondan event management platform built with React.js, Vite, and Tailwind CSS.
 
-## 📋 Table of Contents
-
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Environment Variables](#environment-variables)
-- [Scripts](#scripts)
-- [Project Structure](#project-structure)
-- [Components](#components)
-- [Pages](#pages)
-- [Routing](#routing)
-- [State Management](#state-management)
-- [Styling](#styling)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-
 ## ✨ Features
 
 - **Modern UI/UX**: Clean, responsive design with dark/light theme support
