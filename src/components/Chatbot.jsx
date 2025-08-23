@@ -2,31 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Bot, User } from 'lucide-react';
 
 const Chatbot = ({ isOpen, onClose }) => {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      text: "Hello! I'm the Nondan assistant. How can I help you today?",
-      sender: 'bot',
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
-
-  // FAQ responses
-  const faqResponses = {
-    'how to register': 'To register for an event, visit the event page and click the "Register" button. You\'ll need to be logged in to your Nondan account.',
-    'create account': 'You can create an account by clicking "Sign Up" in the top navigation. Choose between Student or Admin account types.',
-    'event registration': 'Event registration is free for most events. Some premium events may require payment. You\'ll see the cost (if any) on the event page.',
-    'certificates': 'You can download your certificates from the "Certificates" page in your student dashboard after completing events.',
-    'hub membership': 'To join a hub, visit the hub page and click "Join Hub". Some hubs may require approval from administrators.',
-    'forgot password': 'Click "Forgot Password" on the login page and enter your email. We\'ll send you a reset link.',
-    'contact support': 'You can contact our support team at support@nondan.com or use the contact form in the Settings page.',
-    'cancel registration': 'You can cancel your event registration from your student dashboard up to 24 hours before the event starts.',
-    'event creation': 'Hub administrators can create events through the admin dashboard. Visit "Create Event" in the admin panel.',
-    'platform features': 'Nondan offers event management, hub communities, certificate generation, QR check-ins, and analytics for organizers.'
-  };
 
   const quickReplies = [
     'How to register for events?',
@@ -40,8 +19,47 @@ const Chatbot = ({ isOpen, onClose }) => {
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    if (isOpen && messages.length === 0) {
+      fetchInitialMessage();
+    }
+  }, [isOpen]);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // First bot message comes from backend
+  const fetchInitialMessage = async () => {
+    setIsTyping(true);
+    try {
+      const response = await fetch("http://localhost:5000/api/ai/aicall", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: "hello" })
+      });
+      const data = await response.json();
+      setMessages([
+        {
+          id: Date.now(),
+          text: data.reply || "Hi! How can I assist you today?",
+          sender: 'bot',
+          timestamp: new Date()
+        }
+      ]);
+    } catch (err) {
+      console.error(err);
+      setMessages([
+        {
+          id: Date.now(),
+          text: "⚠️ Error: Could not connect to server.",
+          sender: 'bot',
+          timestamp: new Date()
+        }
+      ]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const handleSendMessage = async () => {
@@ -58,41 +76,39 @@ const Chatbot = ({ isOpen, onClose }) => {
     setInputMessage('');
     setIsTyping(true);
 
-    // Simulate bot typing delay
-    setTimeout(() => {
-      const botResponse = generateBotResponse(inputMessage.toLowerCase());
+    try {
+      const response = await fetch("http://localhost:5000/api/ai/aicall", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contents: inputMessage.toLowerCase() }),
+      });
+
+      const data = await response.json();
+      console.log(inputMessage)
+      console.log(data)
+
       const botMessage = {
         id: Date.now() + 1,
-        text: botResponse,
+        text: data || "Sorry, I couldn't understand. Please try again.",
         sender: 'bot',
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, botMessage]);
+    } catch (err) {
+      console.error(err);
+      setMessages(prev => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          text: "⚠️ Error: Could not connect to server. Please try again.",
+          sender: 'bot',
+          timestamp: new Date()
+        }
+      ]);
+    } finally {
       setIsTyping(false);
-    }, 1000);
-  };
-
-  const generateBotResponse = (userInput) => {
-    // Check for FAQ matches
-    for (const [key, response] of Object.entries(faqResponses)) {
-      if (userInput.includes(key)) {
-        return response;
-      }
     }
-
-    // Check for greeting
-    if (userInput.includes('hello') || userInput.includes('hi') || userInput.includes('hey')) {
-      return "Hello! Welcome to Nondan. I'm here to help you with any questions about our platform. What would you like to know?";
-    }
-
-    // Check for thanks
-    if (userInput.includes('thank') || userInput.includes('thanks')) {
-      return "You're welcome! Is there anything else I can help you with regarding Nondan?";
-    }
-
-    // Default response
-    return "I'm not sure about that specific question, but I can help you with:\n\n• Event registration and management\n• Account creation and settings\n• Hub membership\n• Certificates and downloads\n• General platform features\n\nYou can also contact our support team at support@nondan.com for more detailed assistance.";
   };
 
   const handleQuickReply = (reply) => {
@@ -138,28 +154,25 @@ const Chatbot = ({ isOpen, onClose }) => {
               className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div className={`flex space-x-2 max-w-xs ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  message.sender === 'user' 
-                    ? 'bg-indigo-600' 
-                    : 'bg-gray-300 dark:bg-gray-600'
-                }`}>
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${message.sender === 'user'
+                  ? 'bg-indigo-600'
+                  : 'bg-gray-300 dark:bg-gray-600'
+                  }`}>
                   {message.sender === 'user' ? (
                     <User className="h-3 w-3 text-white" />
                   ) : (
                     <Bot className="h-3 w-3 text-gray-600 dark:text-gray-300" />
                   )}
                 </div>
-                <div className={`rounded-lg p-3 ${
-                  message.sender === 'user'
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
-                }`}>
-                  <p className="text-sm whitespace-pre-line">{message.text}</p>
-                  <p className={`text-xs mt-1 ${
-                    message.sender === 'user' 
-                      ? 'text-indigo-200' 
-                      : 'text-gray-500 dark:text-gray-400'
+                <div className={`rounded-lg p-3 ${message.sender === 'user'
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
                   }`}>
+                  <p className="text-sm whitespace-pre-line">{message.text}</p>
+                  <p className={`text-xs mt-1 ${message.sender === 'user'
+                    ? 'text-indigo-200'
+                    : 'text-gray-500 dark:text-gray-400'
+                    }`}>
                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
