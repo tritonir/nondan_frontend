@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import nondanLogo from '../../assets/nondan.svg';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -47,9 +48,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="lg:col-span-2">
             <div className="flex items-center mb-4">
-              <div style={{ background: 'var(--primary-accent-2)' }} className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold">
-                N
-              </div>
+              <img src={nondanLogo} alt="Nondan Logo" className="w-8 h-8 rounded-lg" />
               <span className="ml-2 text-xl font-bold" style={{ color: '#fff' }}>Nondan</span>
             </div>
             <p className="mb-6 max-w-sm" style={{ color: '#fff' }}>

@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import Button from './ui/Button';
 import Avatar from './ui/Avatar';
+import nondanLogo from '../assets/nondan.svg';
 
 const Navbar = () => {
   const { isDark, toggleTheme } = useTheme();
@@ -84,12 +85,11 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center group">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg transition-transform group-hover:scale-105"
-                style={{ background: 'var(--primary-accent-1)' }}
-              >
-                N
-              </div>
+              <img
+                src={nondanLogo}
+                alt="Nondan Logo"
+                className="w-10 h-10 rounded-xl transition-transform group-hover:scale-105"
+              />
               <span className="ml-3 text-xl font-bold text-gray-900 dark:text-white">
                 Nondan
               </span>
