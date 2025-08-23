@@ -105,7 +105,7 @@ const AuthPage = ({ type = 'login' }) => {
             {isLogin ? 'Welcome back' : 'Create your account'}
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            {isLogin ? 'Sign in to access your dashboard' : 'Join Eventify and discover amazing events'}
+            {isLogin ? 'Sign in to access your dashboard' : 'Join Nondan and discover amazing events'}
           </p>
         </div>
 

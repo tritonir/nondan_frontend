@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useClubTheme } from '../context/ThemeContext';
+import { useClubTheme } from '../context/ThemeHooks';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
 

@@ -106,11 +106,11 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Welcome to <span className="text-[var(--soft-background)]">Eventify</span>
+              Welcome to <span className="text-[var(--soft-background)]">Nondan</span>
             </h1>
             <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
               Discover amazing events, connect with clubs, and make the most of your university experience.
-              Join thousands of students already using Eventify to stay engaged.
+              Join thousands of students already using Nondan to stay engaged.
             </p>
 
             {/* Search Bar */}
@@ -220,7 +220,7 @@ const Home = () => {
               Ready to Get Started?
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-              Join Eventify today and never miss out on amazing university events and activities.
+              Join Nondan today and never miss out on amazing university events and activities.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/auth/signup">

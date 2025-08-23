@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '../context/ThemeHooks';
 import { useAuth } from '../context/AuthContext';
 import Button from './ui/Button';
 import Avatar from './ui/Avatar';
@@ -38,9 +38,9 @@ const Navbar = () => {
             <div className="flex items-center">
               <Link to="/" className="flex items-center">
                 <div className="w-8 h-8 bg-[var(--primary-accent-1)] rounded-lg flex items-center justify-center text-white font-bold">
-                  E
+                  N
                 </div>
-                <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">Eventify</span>
+                <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">Nondan</span>
               </Link>
             </div>
 
@@ -162,7 +162,7 @@ const Navbar = () => {
       <Modal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
-        title="Welcome to Eventify"
+        title="Welcome to Nondan"
       >
         <div className="text-center">
           <p className="text-gray-600 dark:text-gray-400 mb-6">
