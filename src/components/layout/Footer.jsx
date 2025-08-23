@@ -197,7 +197,7 @@ const Footer = () => {
               <input
                 type="email"
                 placeholder="Enter your email"
-                style={{ background: 'var(--primary-bg)', color: '#fff', borderColor: 'var(--primary-accent-2)' }}
+                style={{ background: 'var(--primary-bg)', color: '#000', borderColor: 'var(--primary-accent-2)' }}
                 className="flex-1 px-4 py-2 rounded-l-lg focus:ring-2 focus:ring-[var(--primary-accent-2)] focus:border-transparent"
               />
               <button style={{ background: 'var(--primary-accent-2)', color: '#fff' }} className="px-6 py-2 rounded-r-lg hover:opacity-90 transition-colors">
