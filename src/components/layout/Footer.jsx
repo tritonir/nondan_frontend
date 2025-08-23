@@ -40,34 +40,34 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+    <footer style={{ background: 'var(--color-gray-900)' }} className="border-t border-gray-200 dark:border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           {/* Brand Section */}
           <div className="lg:col-span-2">
             <div className="flex items-center mb-4">
-              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold">
+              <div style={{ background: 'var(--primary-accent-2)' }} className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold">
                 N
               </div>
-              <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">Nondan</span>
+              <span className="ml-2 text-xl font-bold" style={{ color: '#fff' }}>Nondan</span>
             </div>
-            <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-sm">
+            <p className="mb-6 max-w-sm" style={{ color: '#fff' }}>
               Connecting students with amazing events and vibrant communities.
               Discover, engage, and grow with Nondan.
             </p>
 
             {/* Contact Info */}
-            <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+            <div className="space-y-2 text-sm" style={{ color: '#fff' }}>
               <div className="flex items-center">
                 <Mail className="h-4 w-4 mr-2" />
-                <a href="mailto:hello@nondan.com" className="hover:text-indigo-600 dark:hover:text-indigo-400">
+                <a href="mailto:hello@nondan.com" style={{ color: '#fff' }} className="hover:underline">
                   hello@nondan.com
                 </a>
               </div>
               <div className="flex items-center">
                 <Phone className="h-4 w-4 mr-2" />
-                <a href="tel:+1-555-0123" className="hover:text-indigo-600 dark:hover:text-indigo-400">
+                <a href="tel:+1-555-0123" style={{ color: '#fff' }} className="hover:underline">
                   +1 (555) 012-3456
                 </a>
               </div>
@@ -80,7 +80,7 @@ const Footer = () => {
 
           {/* Platform Links */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">
+            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: '#fff' }}>
               Platform
             </h3>
             <ul className="space-y-2">
@@ -88,7 +88,7 @@ const Footer = () => {
                 <li key={link.path}>
                   <Link
                     to={link.path}
-                    className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm transition-colors"
+                    style={{ color: '#fff' }} className="hover:underline"
                   >
                     {link.label}
                   </Link>
@@ -99,7 +99,7 @@ const Footer = () => {
 
           {/* Account Links */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">
+            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: '#fff' }}>
               Account
             </h3>
             <ul className="space-y-2">
@@ -107,7 +107,7 @@ const Footer = () => {
                 <li key={link.path}>
                   <Link
                     to={link.path}
-                    className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm transition-colors"
+                    style={{ color: '#fff' }} className="hover:underline"
                   >
                     {link.label}
                   </Link>
@@ -118,7 +118,7 @@ const Footer = () => {
 
           {/* Support Links */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">
+            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: '#fff' }}>
               Support
             </h3>
             <ul className="space-y-2">
@@ -126,7 +126,7 @@ const Footer = () => {
                 <li key={link.path}>
                   <Link
                     to={link.path}
-                    className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm transition-colors"
+                    style={{ color: '#fff' }} className="hover:underline"
                   >
                     {link.label}
                   </Link>
@@ -137,7 +137,7 @@ const Footer = () => {
 
           {/* Company Links */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">
+            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: '#fff' }}>
               Company
             </h3>
             <ul className="space-y-2">
@@ -145,7 +145,7 @@ const Footer = () => {
                 <li key={link.path}>
                   <Link
                     to={link.path}
-                    className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm transition-colors"
+                    style={{ color: '#fff' }} className="hover:underline"
                   >
                     {link.label}
                   </Link>
@@ -159,7 +159,7 @@ const Footer = () => {
         <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
           <div className="flex flex-col md:flex-row justify-between items-center">
             {/* Copyright */}
-            <div className="text-sm text-gray-600 dark:text-gray-400 mb-4 md:mb-0">
+            <div className="text-sm mb-4 md:mb-0" style={{ color: '#fff' }}>
               © {currentYear} Nondan. All rights reserved.
             </div>
 
@@ -173,7 +173,8 @@ const Footer = () => {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                    style={{ color: '#fff' }}
+                    className="hover:underline"
                     aria-label={social.label}
                   >
                     <Icon className="h-5 w-5" />
@@ -187,19 +188,20 @@ const Footer = () => {
         {/* Newsletter Signup */}
         <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
           <div className="max-w-md mx-auto text-center">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <h3 className="text-lg font-semibold mb-2" style={{ color: '#fff' }}>
               Stay Updated
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">
+            <p className="mb-4 text-sm" style={{ color: '#fff' }}>
               Get notified about new events and platform updates
             </p>
             <div className="flex">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-l-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                style={{ background: 'var(--primary-bg)', color: '#fff', borderColor: 'var(--primary-accent-2)' }}
+                className="flex-1 px-4 py-2 rounded-l-lg focus:ring-2 focus:ring-[var(--primary-accent-2)] focus:border-transparent"
               />
-              <button className="px-6 py-2 bg-indigo-600 text-white rounded-r-lg hover:bg-indigo-700 transition-colors">
+              <button style={{ background: 'var(--primary-accent-2)', color: '#fff' }} className="px-6 py-2 rounded-r-lg hover:opacity-90 transition-colors">
                 Subscribe
               </button>
             </div>
