@@ -1,5 +1,9 @@
 # Nondan Frontend
 
+![Nondan Cover](./cover.png)
+
+🎨 **Design**: [View on Figma](https://www.figma.com/design/TGEWoiUVvVJb5KE59obG7K/Nondan---Event-Management-Platform)
+
 A modern, responsive frontend application for the Nondan event management platform built with React.js, Vite, and Tailwind CSS.
 
 ## 📋 Table of Contents
@@ -85,16 +89,10 @@ The application will start running on `http://localhost:5173`
 Create a `.env.local` file in the root directory with the following variables:
 
 ```env
-# API Configuration
 VITE_API_BASE_URL=http://localhost:5000/api
 VITE_API_URL=http://localhost:5000
-
-# Application Configuration
 VITE_APP_NAME=Nondan
 VITE_APP_VERSION=1.0.0
-
-# External Services (Optional)
-VITE_GOOGLE_ANALYTICS_ID=your_ga_id
 ```
 
 ## 📜 Scripts
@@ -108,83 +106,22 @@ VITE_GOOGLE_ANALYTICS_ID=your_ga_id
 
 ```
 nondan_frontend/
-├── public/
-│   └── vite.svg                 # Vite logo
 ├── src/
-│   ├── assets/
-│   │   └── nondan.svg           # App logo
-│   ├── components/
-│   │   ├── layout/
-│   │   │   ├── Footer.jsx       # Main footer component
-│   │   │   └── Sidebar.jsx      # Sidebar navigation
-│   │   ├── ui/
-│   │   │   ├── Avatar.jsx       # User avatar component
-│   │   │   ├── Badge.jsx        # Status badges
-│   │   │   ├── Button.jsx       # Reusable button component
-│   │   │   ├── Card.jsx         # Card container
-│   │   │   ├── LoadingSpinner.jsx # Loading indicator
-│   │   │   ├── Modal.jsx        # Modal dialogs
-│   │   │   ├── SearchBar.jsx    # Search input component
-│   │   │   └── ThemeToggle.jsx  # Dark/light mode toggle
-│   │   ├── club/
-│   │   │   ├── InviteModal.jsx  # Club invitation modal
-│   │   │   ├── MemberList.jsx   # Club members display
-│   │   │   └── RoleManager.jsx  # Role management
-│   │   ├── Chatbot.jsx          # AI chatbot component
-│   │   ├── ClubCard.jsx         # Club display card
-│   │   ├── ErrorBoundary.jsx    # Error handling wrapper
-│   │   ├── EventCard.jsx        # Event display card
-│   │   └── navbar.jsx           # Main navigation
-│   ├── context/
-│   │   ├── AuthContext.jsx      # Authentication state
-│   │   ├── ThemeContext.jsx     # Theme management
-│   │   └── ThemeHooks.js        # Theme-related hooks
-│   ├── hooks/
-│   │   ├── useClubRoles.js      # Club role management hook
-│   │   └── useData.js           # Data fetching hook
-│   ├── pages/
-│   │   ├── admin/
-│   │   │   ├── Analytics.jsx    # Admin analytics dashboard
-│   │   │   ├── AttendeeManagement.jsx # Event attendee management
-│   │   │   ├── ClubManagement.jsx # Club administration
-│   │   │   ├── CreateEvent.jsx  # Event creation form
-│   │   │   ├── Dashboard.jsx    # Admin dashboard
-│   │   │   ├── EditEvent.jsx    # Event editing form
-│   │   │   ├── Events.jsx       # Admin event management
-│   │   │   └── Scanner.jsx      # QR code scanner
-│   │   ├── student/
-│   │   │   ├── Certificates.jsx # Student certificates
-│   │   │   ├── Dashboard.jsx    # Student dashboard
-│   │   │   ├── Events.jsx       # Student events view
-│   │   │   └── Profile.jsx      # Student profile
-│   │   ├── AuthPage.jsx         # Login/signup page
-│   │   ├── BlogPage.jsx         # Blog/news page
-│   │   ├── ClubDetailPage.jsx   # Individual club details
-│   │   ├── ClubsPage.jsx        # All clubs listing
-│   │   ├── EventDetailPage.jsx  # Individual event details
-│   │   ├── EventsPage.jsx       # All events listing
-│   │   ├── home.jsx             # Landing page
-│   │   ├── NotFound.jsx         # 404 error page
-│   │   ├── Settings.jsx         # User settings
-│   │   └── VerifyCertificate.jsx # Certificate verification
-│   ├── styles/
-│   │   └── theme.js             # Theme configuration
-│   ├── App.jsx                  # Main app component
-│   ├── index.css                # Global styles
-│   └── main.jsx                 # App entry point
-├── .eslintrc.js                 # ESLint configuration
-├── index.html                   # HTML template
-├── package.json                 # Dependencies and scripts
-├── tailwind.config.js           # Tailwind CSS configuration
-├── vercel.json                  # Vercel deployment config
-├── vite.config.js               # Vite configuration
-└── README.md                    # This file
+│   ├── components/          # Reusable UI components
+│   ├── pages/              # Page components
+│   ├── context/            # React Context providers
+│   ├── hooks/              # Custom React hooks
+│   ├── assets/             # Static assets
+│   └── styles/             # Global styles and theme
+├── public/                 # Public assets
+├── package.json           # Dependencies and scripts
+└── README.md              # This file
 ```
 
 ## 🧩 Components
 
 ### UI Components
-- **Button**: Customizable button with variants (primary, secondary, outline, ghost)
+- **Button**: Customizable button with variants
 - **Card**: Container component for content sections
 - **Modal**: Reusable modal dialog system
 - **Avatar**: User profile image component
@@ -213,182 +150,66 @@ nondan_frontend/
 - **EventDetail**: Detailed event information and registration
 - **ClubDetail**: Club information and membership options
 - **AuthPage**: Login and signup forms
-- **VerifyCertificate**: Certificate verification system
 
 ### Protected Pages
 - **Student Dashboard**: Personalized student interface
-- **Student Profile**: Profile management for students
-- **Student Events**: Student's registered events
-- **Student Certificates**: Earned certificates display
-
-### Admin Pages
 - **Admin Dashboard**: Administrative overview
-- **Event Management**: Create, edit, and manage events
-- **Club Management**: Administer clubs and memberships
-- **Analytics**: Platform statistics and insights
-- **Attendee Management**: Manage event participants
-- **QR Scanner**: Certificate and ticket scanning
+- **Profile Management**: User profile and settings
+- **Event Management**: Create and manage events (Admin)
+- **Club Management**: Administer clubs and memberships (Admin)
 
 ## 🛣 Routing
 
-The application uses React Router for navigation with the following structure:
+The application uses React Router for navigation:
 
 ### Public Routes
 - `/` - Home page
 - `/events` - Events listing
 - `/clubs` - Clubs listing
-- `/event/:id` - Event details
-- `/club/:id` - Club details
 - `/auth/login` - Login page
 - `/auth/signup` - Registration page
-- `/verify/:certificateId` - Certificate verification
 
-### Protected Routes (Authentication Required)
-- `/settings` - User settings
+### Protected Routes
 - `/student/*` - Student dashboard routes
 - `/admin/*` - Admin dashboard routes (Admin role required)
-
-### Route Protection
-- **PublicRoute**: Redirects authenticated users to dashboard
-- **ProtectedRoute**: Requires authentication
-- **AdminRoute**: Requires admin role
 
 ## 🗂 State Management
 
 The application uses React Context API for state management:
 
-### AuthContext
-Manages user authentication state:
-- User information (name, email, role)
-- Authentication status
-- Login/logout functionality
-- JWT token management
-
-### ThemeContext
-Handles theme switching:
-- Dark/light mode toggle
-- Theme persistence
-- System preference detection
+- **AuthContext**: User authentication and authorization
+- **ThemeContext**: Dark/light mode theme switching
 
 ## 🎨 Styling
 
-### Tailwind CSS
-- **Utility-first**: Use Tailwind utility classes
+- **Tailwind CSS**: Utility-first CSS framework
 - **Responsive Design**: Mobile-first approach
-- **Custom Theme**: Defined in `tailwind.config.js`
 - **Dark Mode**: Built-in dark theme support
-
-### Design System
-- **Colors**: Primary accent colors with CSS variables
-- **Typography**: Consistent font sizes and weights
-- **Spacing**: Standardized margin and padding
-- **Shadows**: Consistent elevation system
-
-### CSS Variables
-```css
-:root {
-  --primary-accent-1: #your-primary-color;
-  --primary-accent-2: #your-secondary-color;
-}
-```
+- **Custom Theme**: Defined color variables and design tokens
 
 ## 🚀 Deployment
 
 ### Vercel Deployment
 
-The project is configured for Vercel deployment with `vercel.json`:
+The project is configured for Vercel deployment with `vercel.json` for proper client-side routing support.
 
-```json
-{
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
-}
+```bash
+npm run build
+vercel --prod
 ```
-
-This handles client-side routing for direct URL access.
-
-### Deployment Steps
-
-1. **Build the project**
-   ```bash
-   npm run build
-   ```
-
-2. **Deploy to Vercel**
-   ```bash
-   # Install Vercel CLI
-   npm i -g vercel
-   
-   # Deploy
-   vercel --prod
-   ```
-
-3. **Environment Variables**
-   Set environment variables in Vercel dashboard or CLI
-
-### Other Platforms
-
-The built files in `/dist` can be deployed to:
-- **Netlify**: Drag and drop `/dist` folder
-- **GitHub Pages**: Use `gh-pages` package
-- **AWS S3**: Upload `/dist` contents to S3 bucket
-- **Firebase Hosting**: Use Firebase CLI
 
 ## 🛠 Development Guidelines
 
 ### Code Style
 - Use functional components with hooks
 - Follow React best practices
-- Use TypeScript-style JSDoc comments
 - Maintain component purity when possible
+- Use descriptive component and variable names
 
 ### File Naming
 - Components: PascalCase (e.g., `EventCard.jsx`)
 - Pages: PascalCase (e.g., `Dashboard.jsx`)
 - Hooks: camelCase starting with 'use' (e.g., `useAuth.js`)
-- Utilities: camelCase (e.g., `formatDate.js`)
-
-### Component Structure
-```jsx
-// Imports
-import React, { useState, useEffect } from 'react';
-
-// Component
-const ComponentName = ({ prop1, prop2 }) => {
-  // Hooks
-  const [state, setState] = useState(null);
-  
-  // Effects
-  useEffect(() => {
-    // Side effects
-  }, []);
-  
-  // Event handlers
-  const handleClick = () => {
-    // Handler logic
-  };
-  
-  // Render
-  return (
-    <div className="component-wrapper">
-      {/* JSX content */}
-    </div>
-  );
-};
-
-export default ComponentName;
-```
-
-## 🧪 Testing
-
-### Future Testing Setup
-- **Unit Tests**: Jest + React Testing Library
-- **Integration Tests**: Cypress or Playwright
-- **Component Tests**: Storybook (planned)
 
 ## 🤝 Contributing
 
@@ -399,13 +220,18 @@ export default ComponentName;
 5. Push to the branch (`git push origin feature/AmazingFeature`)
 6. Open a Pull Request
 
-### Development Workflow
-1. Check existing issues or create a new one
-2. Follow the component and naming conventions
-3. Ensure responsive design compliance
-4. Test across different browsers
-5. Update documentation if needed
-
 ## 📄 License
 
 This project is licensed under the MIT License.
+
+## 📞 Support
+
+For support, email hello@nondan.com or create an issue in the repository.
+
+## 🔗 Related Projects
+
+- [Nondan Backend](../nondan_backend) - Backend API for this application
+
+---
+
+**Happy Coding!** 🚀
