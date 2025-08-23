@@ -1,1 +1,95 @@
 @import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design System Colors */
+:root {
+  /* Platform Level Colors (Default) */
+  --primary-dark: #000000;
+  --primary-accent-1: #CF0F47;
+  --primary-accent-2: #FF0B55;
+  --soft-background: #FFDEDE;
+
+  /* Light Mode */
+  --bg-light: #FFFFFF;
+  --text-light: #000000;
+  --card-light: #F8F9FA;
+
+  /* Dark Mode */
+  --bg-dark: #000000;
+  --text-dark: #FFFFFF;
+  --card-dark: #1A1A1A;
+
+  /* Club Theme Variables (Dynamic) */
+  --club-primary: var(--primary-accent-1);
+  --club-secondary: var(--primary-accent-2);
+}
+
+/* Dark mode styles */
+.dark {
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+}
+
+/* Club themed components */
+.club-themed {
+  --primary-accent-1: var(--club-primary);
+  --primary-accent-2: var(--club-secondary);
+}
+
+/* Custom component styles */
+@layer components {
+  .btn-primary {
+    @apply bg-[var(--primary-accent-1)] hover:bg-[var(--primary-accent-2)] text-white font-medium py-2 px-4 rounded-lg transition-colors;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg transition-colors;
+  }
+
+  .btn-outline {
+    @apply border-2 border-[var(--primary-accent-1)] text-[var(--primary-accent-1)] hover:bg-[var(--primary-accent-1)] hover:text-white font-medium py-2 px-4 rounded-lg transition-colors;
+  }
+
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700;
+  }
+
+  .nav-link {
+    @apply text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors;
+  }
+
+  .nav-link-active {
+    @apply text-gray-900 dark:text-white font-medium;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4a5568;
+}
+
+/* Animation utilities */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
