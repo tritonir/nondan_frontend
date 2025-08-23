@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
+import { Eye, EyeOff, Mail, Lock, User, Shield } from 'lucide-react';
+import nondanLogo from '../assets/nondan.svg';
 
 const AuthPage = ({ type = 'login' }) => {
   const [formData, setFormData] = useState({
@@ -121,8 +123,9 @@ const AuthPage = ({ type = 'login' }) => {
       } else {
         setErrors({ submit: data.error || "Authentication failed" });
       }
-    } catch (error) {
-      setErrors({ submit: "An error occurred. Please try again." });
+      } catch {
+      setErrors({ submit: 'An unexpected error occurred' });
+
     } finally {
       setIsLoading(false);
     }
@@ -134,12 +137,12 @@ const AuthPage = ({ type = 'login' }) => {
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
-          <div className="flex justify-center mb-4">
-            <div className="w-12 h-12 bg-[var(--primary-accent-1)] rounded-lg flex items-center justify-center text-white font-bold text-xl">
-              E
-            </div>
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <Link to="/" className="inline-flex items-center mb-6">
+            <img src={nondanLogo} alt="Nondan Logo" className="w-12 h-12 rounded-xl" />
+            <span className="ml-3 text-2xl font-bold text-gray-900 dark:text-white">Nondan</span>
+          </Link>
+
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
             {isLogin ? 'Welcome back' : 'Create your account'}
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
