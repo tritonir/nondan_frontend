@@ -51,6 +51,108 @@ export const mockEvents = [
     status: 'upcoming',
     tags: ['Startup', 'Business', 'Innovation'],
     registrationDeadline: '2024-03-22'
+  },
+  {
+    id: '4',
+    title: 'Intercollege Football Tournament',
+    description: 'Compete with top teams in an exciting football championship.',
+    date: '2024-04-05',
+    time: '16:00',
+    location: 'Sports Ground',
+    category: 'Sports',
+    image: '/images/football.jpg',
+    clubId: 'club4',
+    attendees: 200,
+    maxAttendees: 300,
+    organizer: 'Sports Club',
+    status: 'ongoing',
+    tags: ['Football', 'Sports', 'Competition'],
+    registrationDeadline: '2024-04-01'
+  },
+  {
+    id: '5',
+    title: 'Art Exhibition: Colors of Life',
+    description: 'Showcase your creativity at our annual art exhibition.',
+    date: '2024-04-10',
+    time: '11:00',
+    location: 'Art Gallery',
+    category: 'Arts',
+    image: '/images/art-exhibition.jpg',
+    clubId: 'club5',
+    attendees: 60,
+    maxAttendees: 100,
+    organizer: 'Arts Club',
+    status: 'upcoming',
+    tags: ['Art', 'Exhibition', 'Creativity'],
+    registrationDeadline: '2024-04-08'
+  },
+  {
+    id: '6',
+    title: 'Academic Quiz Bowl',
+    description: 'Test your knowledge and win prizes in our quiz competition.',
+    date: '2024-04-15',
+    time: '13:00',
+    location: 'Lecture Hall 2',
+    category: 'Academic',
+    image: '/images/quiz-bowl.jpg',
+    clubId: 'club6',
+    attendees: 40,
+    maxAttendees: 60,
+    organizer: 'Academic Club',
+    status: 'completed',
+    tags: ['Quiz', 'Academic', 'Competition'],
+    registrationDeadline: '2024-04-12'
+  },
+  {
+    id: '7',
+    title: 'Social Impact Hackathon',
+    description: 'Collaborate to solve real-world social issues in a 24-hour hackathon.',
+    date: '2024-04-20',
+    time: '09:00',
+    location: 'Innovation Hub',
+    category: 'Social',
+    image: '/images/social-hackathon.jpg',
+    clubId: 'club7',
+    attendees: 120,
+    maxAttendees: 150,
+    organizer: 'Social Club',
+    status: 'upcoming',
+    tags: ['Hackathon', 'Social', 'Impact'],
+    registrationDeadline: '2024-04-18'
+  },
+  {
+    id: '8',
+    title: 'Health & Wellness Fair',
+    description: 'Learn about healthy living and wellness from experts.',
+    date: '2024-04-25',
+    time: '10:00',
+    location: 'Community Center',
+    category: 'Health',
+    image: '/images/health-fair.jpg',
+    clubId: 'club8',
+    attendees: 90,
+    maxAttendees: 120,
+    organizer: 'Health Club',
+    status: 'upcoming',
+    tags: ['Health', 'Wellness', 'Fair'],
+    registrationDeadline: '2024-04-22'
+  },
+  {
+    id: '9',
+    title: 'Eco Awareness Drive',
+    description: 'Join us to promote environmental sustainability on campus.',
+    date: '2024-04-30',
+    time: '15:00',
+    location: 'Open Grounds',
+    category: 'Environment',
+    image: '/images/eco-drive.jpg',
+    clubId: 'club9',
+    attendees: 110,
+    maxAttendees: 200,
+    organizer: 'Eco Club',
+    status: 'upcoming',
+    tags: ['Environment', 'Sustainability', 'Awareness'],
+    registrationDeadline: '2024-04-28'
   }
 ];
 
@@ -113,6 +215,126 @@ export const mockClubs = [
     social: {
       website: 'https://entrepreneurclub.nondan.com',
       email: 'hello@entrepreneurclub.nondan.com'
+    }
+  },
+  {
+    id: 'club4',
+    name: 'Sports Club',
+    description: 'Promoting fitness and teamwork through sports and games.',
+    logo: '/images/sports-logo.jpg',
+    banner: '/images/sports-banner.jpg',
+    theme: {
+      primary: '#e63946',
+      secondary: '#f1faee',
+      accent: '#457b9d'
+    },
+    members: 980,
+    events: ['4'],
+    category: 'Sports',
+    founded: '2018-05-12',
+    social: {
+      website: 'https://sportsclub.nondan.com',
+      email: 'info@sportsclub.nondan.com'
+    }
+  },
+  {
+    id: 'club5',
+    name: 'Arts Club',
+    description: 'A vibrant community for artists and art lovers.',
+    logo: '/images/arts-logo.jpg',
+    banner: '/images/arts-banner.jpg',
+    theme: {
+      primary: '#ffb4a2',
+      secondary: '#6d6875',
+      accent: '#b5838d'
+    },
+    members: 540,
+    events: ['5'],
+    category: 'Arts',
+    founded: '2017-11-03',
+    social: {
+      website: 'https://artsclub.nondan.com',
+      email: 'contact@artsclub.nondan.com'
+    }
+  },
+  {
+    id: 'club6',
+    name: 'Academic Club',
+    description: 'Encouraging academic excellence and curiosity.',
+    logo: '/images/academic-logo.jpg',
+    banner: '/images/academic-banner.jpg',
+    theme: {
+      primary: '#3a86ff',
+      secondary: '#8338ec',
+      accent: '#ffbe0b'
+    },
+    members: 720,
+    events: ['6'],
+    category: 'Academic',
+    founded: '2016-02-28',
+    social: {
+      website: 'https://academicclub.nondan.com',
+      email: 'hello@academicclub.nondan.com'
+    }
+  },
+  {
+    id: 'club7',
+    name: 'Social Club',
+    description: 'Building connections and making a positive impact.',
+    logo: '/images/social-logo.jpg',
+    banner: '/images/social-banner.jpg',
+    theme: {
+      primary: '#ff006e',
+      secondary: '#fb5607',
+      accent: '#ffbe0b'
+    },
+    members: 610,
+    events: ['7'],
+    category: 'Social',
+    founded: '2015-08-19',
+    social: {
+      website: 'https://socialclub.nondan.com',
+      email: 'info@socialclub.nondan.com'
+    }
+  },
+  {
+    id: 'club8',
+    name: 'Health Club',
+    description: 'Focusing on health, wellness, and a balanced lifestyle.',
+    logo: '/images/health-logo.jpg',
+    banner: '/images/health-banner.jpg',
+    theme: {
+      primary: '#06d6a0',
+      secondary: '#118ab2',
+      accent: '#ffd166'
+    },
+    members: 430,
+    events: ['8'],
+    category: 'Health',
+    founded: '2019-04-22',
+    social: {
+      website: 'https://healthclub.nondan.com',
+      email: 'contact@healthclub.nondan.com'
+    }
+  },
+  {
+    id: 'club9',
+    name: 'Eco Club',
+    description: 'Promoting environmental awareness and sustainability.',
+    logo: '/images/eco-logo.jpg',
+    banner: '/images/eco-banner.jpg',
+    theme: {
+      primary: '#43aa8b',
+      secondary: '#90be6d',
+      accent: '#4d908e'
+    },
+    members: 370,
+    events: ['9'],
+    category: 'Environment',
+    founded: '2020-06-05',
+    social: {
+      website: 'https://ecoclub.nondan.com',
+      email: 'hello@ecoclub.nondan.com'
     }
   }
 ];

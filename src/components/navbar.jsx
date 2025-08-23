@@ -4,14 +4,12 @@ import { useTheme } from '../context/ThemeHooks';
 import { useAuth } from '../context/AuthContext';
 import Button from './ui/Button';
 import Avatar from './ui/Avatar';
-import Modal from './ui/Modal';
 
 const Navbar = () => {
   const { isDark, toggleTheme } = useTheme();
   const { user, isAuthenticated, logout } = useAuth();
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -106,7 +104,7 @@ const Navbar = () => {
                   )}
                 </div>
               ) : (
-                <Button onClick={() => setShowAuthModal(true)}>
+                <Button onClick={() => navigate('/auth/login')}>
                   Login
                 </Button>
               )}
@@ -146,7 +144,7 @@ const Navbar = () => {
                 <Button
                   className="w-full mt-4"
                   onClick={() => {
-                    setShowAuthModal(true);
+                    navigate('/auth/login');
                     setShowMobileMenu(false);
                   }}
                 >
@@ -157,40 +155,6 @@ const Navbar = () => {
           </div>
         )}
       </nav>
-
-      {/* Auth Modal */}
-      <Modal
-        isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-        title="Welcome to Nondan"
-      >
-        <div className="text-center">
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Sign in to access your dashboard and manage events
-          </p>
-          <div className="space-y-3">
-            <Button
-              className="w-full"
-              onClick={() => {
-                setShowAuthModal(false);
-                navigate('/auth/login');
-              }}
-            >
-              Sign In
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => {
-                setShowAuthModal(false);
-                navigate('/auth/signup');
-              }}
-            >
-              Create Account
-            </Button>
-          </div>
-        </div>
-      </Modal>
     </>
   );
 };
