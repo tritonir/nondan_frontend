@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import { Eye, EyeOff, Mail, Lock, User, Shield } from 'lucide-react';
+import nondanLogo from '../assets/nondan.svg';
 
 const AuthPage = ({ type = 'login' }) => {
   const [formData, setFormData] = useState({
@@ -104,7 +105,7 @@ const AuthPage = ({ type = 'login' }) => {
       } else {
         setErrors({ submit: result.error || 'Authentication failed' });
       }
-    } catch (error) {
+    } catch {
       setErrors({ submit: 'An unexpected error occurred' });
     } finally {
       setIsLoading(false);
@@ -117,9 +118,7 @@ const AuthPage = ({ type = 'login' }) => {
         {/* Header */}
         <div className="text-center">
           <Link to="/" className="inline-flex items-center mb-6">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-xl" style={{ background: 'var(--primary-accent-1)' }}>
-              N
-            </div>
+            <img src={nondanLogo} alt="Nondan Logo" className="w-12 h-12 rounded-xl" />
             <span className="ml-3 text-2xl font-bold text-gray-900 dark:text-white">Nondan</span>
           </Link>
 
