@@ -124,7 +124,7 @@ const Chatbot = ({ isOpen, onClose }) => {
       ]);
     } finally {
       setIsTyping(false);
-    }, 1000);
+    }; 1000;
   };
 
   const generateBotResponse = (userInput) => {
@@ -215,8 +215,8 @@ const Chatbot = ({ isOpen, onClose }) => {
               >
                 <div className={`flex space-x-3 max-w-[70%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm ${message.sender === 'user'
-                      ? ''
-                      : 'bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600'
+                    ? ''
+                    : 'bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600'
                     }`}
                     style={message.sender === 'user' ? {
                       background: `linear-gradient(135deg, ${safeTheme.primary}, ${safeTheme.accent})`
@@ -229,8 +229,8 @@ const Chatbot = ({ isOpen, onClose }) => {
                     )}
                   </div>
                   <div className={`rounded-2xl px-4 py-3 shadow-sm border ${message.sender === 'user'
-                      ? 'text-white border-transparent'
-                      : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-200 dark:border-gray-600'
+                    ? 'text-white border-transparent'
+                    : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-200 dark:border-gray-600'
                     }`}
                     style={message.sender === 'user' ? {
                       background: `linear-gradient(135deg, ${safeTheme.primary}, ${safeTheme.accent})`
@@ -238,8 +238,8 @@ const Chatbot = ({ isOpen, onClose }) => {
                   >
                     <p className="text-base leading-relaxed whitespace-pre-line">{message.text}</p>
                     <p className={`text-sm mt-2 ${message.sender === 'user'
-                        ? 'text-white/75'
-                        : 'text-gray-500 dark:text-gray-400'
+                      ? 'text-white/75'
+                      : 'text-gray-500 dark:text-gray-400'
                       }`}>
                       {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
@@ -371,8 +371,8 @@ const Chatbot = ({ isOpen, onClose }) => {
             >
               <div className={`flex space-x-2 max-w-[75%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm ${message.sender === 'user'
-                    ? ''
-                    : 'bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600'
+                  ? ''
+                  : 'bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600'
                   }`}
                   style={message.sender === 'user' ? {
                     background: `linear-gradient(135deg, ${safeTheme.primary}, ${safeTheme.accent})`
@@ -385,8 +385,8 @@ const Chatbot = ({ isOpen, onClose }) => {
                   )}
                 </div>
                 <div className={`rounded-2xl px-3 py-2 shadow-sm border ${message.sender === 'user'
-                    ? 'text-white border-transparent'
-                    : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-200 dark:border-gray-600'
+                  ? 'text-white border-transparent'
+                  : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-200 dark:border-gray-600'
                   }`}
                   style={message.sender === 'user' ? {
                     background: `linear-gradient(135deg, ${safeTheme.primary}, ${safeTheme.accent})`
@@ -394,8 +394,8 @@ const Chatbot = ({ isOpen, onClose }) => {
                 >
                   <p className="text-sm leading-relaxed whitespace-pre-line">{message.text}</p>
                   <p className={`text-xs mt-1 ${message.sender === 'user'
-                      ? 'text-white/75'
-                      : 'text-gray-500 dark:text-gray-400'
+                    ? 'text-white/75'
+                    : 'text-gray-500 dark:text-gray-400'
                     }`}>
                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </p>
