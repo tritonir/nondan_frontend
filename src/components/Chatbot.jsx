@@ -3,14 +3,7 @@ import { MessageCircle, X, Send, Bot, User, Expand, Minimize2 } from 'lucide-rea
 import { useClubTheme } from '../context/ThemeHooks';
 
 const Chatbot = ({ isOpen, onClose }) => {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      text: "Hello! I'm the Nondan assistant. How can I help you today?",
-      sender: 'bot',
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -42,8 +35,47 @@ const Chatbot = ({ isOpen, onClose }) => {
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    if (isOpen && messages.length === 0) {
+      fetchInitialMessage();
+    }
+  }, [isOpen]);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // First bot message comes from backend
+  const fetchInitialMessage = async () => {
+    setIsTyping(true);
+    try {
+      const response = await fetch("http://localhost:5000/api/ai/aicall", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: "hello" })
+      });
+      const data = await response.json();
+      setMessages([
+        {
+          id: Date.now(),
+          text: data.reply || "Hi! How can I assist you today?",
+          sender: 'bot',
+          timestamp: new Date()
+        }
+      ]);
+    } catch (err) {
+      console.error(err);
+      setMessages([
+        {
+          id: Date.now(),
+          text: "⚠️ Error: Could not connect to server.",
+          sender: 'bot',
+          timestamp: new Date()
+        }
+      ]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const handleSendMessage = async () => {
@@ -60,19 +92,39 @@ const Chatbot = ({ isOpen, onClose }) => {
     setInputMessage('');
     setIsTyping(true);
 
-    // Simulate bot typing delay
-    setTimeout(() => {
-      const botResponse = generateBotResponse(inputMessage.toLowerCase());
+    try {
+      const response = await fetch("http://localhost:5000/api/ai/aicall", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contents: inputMessage.toLowerCase() }),
+      });
+
+      const data = await response.json();
+      console.log(inputMessage)
+      console.log(data)
+
       const botMessage = {
         id: Date.now() + 1,
-        text: botResponse,
+        text: data || "Sorry, I couldn't understand. Please try again.",
         sender: 'bot',
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, botMessage]);
+    } catch (err) {
+      console.error(err);
+      setMessages(prev => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          text: "⚠️ Error: Could not connect to server. Please try again.",
+          sender: 'bot',
+          timestamp: new Date()
+        }
+      ]);
+    } finally {
       setIsTyping(false);
-    }, 1000);
+    }; 1000;
   };
 
   const generateBotResponse = (userInput) => {
@@ -162,14 +214,13 @@ const Chatbot = ({ isOpen, onClose }) => {
                 className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} animate-fadeIn`}
               >
                 <div className={`flex space-x-3 max-w-[70%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm ${
-                    message.sender === 'user' 
-                      ? '' 
-                      : 'bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600'
-                  }`}
-                  style={message.sender === 'user' ? {
-                    background: `linear-gradient(135deg, ${safeTheme.primary}, ${safeTheme.accent})`
-                  } : {}}
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm ${message.sender === 'user'
+                    ? ''
+                    : 'bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600'
+                    }`}
+                    style={message.sender === 'user' ? {
+                      background: `linear-gradient(135deg, ${safeTheme.primary}, ${safeTheme.accent})`
+                    } : {}}
                   >
                     {message.sender === 'user' ? (
                       <User className="h-4 w-4 text-white" />
@@ -177,21 +228,19 @@ const Chatbot = ({ isOpen, onClose }) => {
                       <Bot className="h-4 w-4" style={{ color: safeTheme.primary }} />
                     )}
                   </div>
-                  <div className={`rounded-2xl px-4 py-3 shadow-sm border ${
-                    message.sender === 'user'
-                      ? 'text-white border-transparent'
-                      : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-200 dark:border-gray-600'
-                  }`}
-                  style={message.sender === 'user' ? {
-                    background: `linear-gradient(135deg, ${safeTheme.primary}, ${safeTheme.accent})`
-                  } : {}}
+                  <div className={`rounded-2xl px-4 py-3 shadow-sm border ${message.sender === 'user'
+                    ? 'text-white border-transparent'
+                    : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-200 dark:border-gray-600'
+                    }`}
+                    style={message.sender === 'user' ? {
+                      background: `linear-gradient(135deg, ${safeTheme.primary}, ${safeTheme.accent})`
+                    } : {}}
                   >
                     <p className="text-base leading-relaxed whitespace-pre-line">{message.text}</p>
-                    <p className={`text-sm mt-2 ${
-                      message.sender === 'user' 
-                        ? 'text-white/75' 
-                        : 'text-gray-500 dark:text-gray-400'
-                    }`}>
+                    <p className={`text-sm mt-2 ${message.sender === 'user'
+                      ? 'text-white/75'
+                      : 'text-gray-500 dark:text-gray-400'
+                      }`}>
                       {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
@@ -321,14 +370,13 @@ const Chatbot = ({ isOpen, onClose }) => {
               className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} animate-fadeIn`}
             >
               <div className={`flex space-x-2 max-w-[75%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm ${
-                  message.sender === 'user' 
-                    ? '' 
-                    : 'bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600'
-                }`}
-                style={message.sender === 'user' ? {
-                  background: `linear-gradient(135deg, ${safeTheme.primary}, ${safeTheme.accent})`
-                } : {}}
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm ${message.sender === 'user'
+                  ? ''
+                  : 'bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600'
+                  }`}
+                  style={message.sender === 'user' ? {
+                    background: `linear-gradient(135deg, ${safeTheme.primary}, ${safeTheme.accent})`
+                  } : {}}
                 >
                   {message.sender === 'user' ? (
                     <User className="h-3 w-3 text-white" />
@@ -336,21 +384,19 @@ const Chatbot = ({ isOpen, onClose }) => {
                     <Bot className="h-3 w-3" style={{ color: safeTheme.primary }} />
                   )}
                 </div>
-                <div className={`rounded-2xl px-3 py-2 shadow-sm border ${
-                  message.sender === 'user'
-                    ? 'text-white border-transparent'
-                    : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-200 dark:border-gray-600'
-                }`}
-                style={message.sender === 'user' ? {
-                  background: `linear-gradient(135deg, ${safeTheme.primary}, ${safeTheme.accent})`
-                } : {}}
+                <div className={`rounded-2xl px-3 py-2 shadow-sm border ${message.sender === 'user'
+                  ? 'text-white border-transparent'
+                  : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-200 dark:border-gray-600'
+                  }`}
+                  style={message.sender === 'user' ? {
+                    background: `linear-gradient(135deg, ${safeTheme.primary}, ${safeTheme.accent})`
+                  } : {}}
                 >
                   <p className="text-sm leading-relaxed whitespace-pre-line">{message.text}</p>
-                  <p className={`text-xs mt-1 ${
-                    message.sender === 'user' 
-                      ? 'text-white/75' 
-                      : 'text-gray-500 dark:text-gray-400'
-                  }`}>
+                  <p className={`text-xs mt-1 ${message.sender === 'user'
+                    ? 'text-white/75'
+                    : 'text-gray-500 dark:text-gray-400'
+                    }`}>
                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
