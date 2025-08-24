@@ -1,46 +1,51 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Users, Calendar, MapPin, ExternalLink, Star, Heart } from 'lucide-react';
-import Badge from './ui/Badge';
-import Button from './ui/Button';
-import Card from './ui/Card';
+import React from "react";
+import { Link } from "react-router-dom";
+import {
+  Users,
+  Calendar,
+  MapPin,
+  ExternalLink,
+  Star,
+  Heart,
+} from "lucide-react";
+import Badge from "./ui/Badge";
+import Button from "./ui/Button";
+import Card from "./ui/Card";
 
-const ClubCard = ({ club, className = '' }) => {
+const ClubCard = ({ club, className = "" }) => {
   const formatMemberCount = (count) => {
     if (count >= 1000) {
       return `${(count / 1000).toFixed(1)}k`;
     }
-    return count?.toString() || '0';
+    return count?.toString() || "0";
   };
 
   const getCategoryColor = (category) => {
     const colors = {
-      'technology': 'primary',
-      'sports': 'success',
-      'arts': 'warning',
-      'academic': 'primary',
-      'social': 'danger',
-      'health': 'success',
-      'environment': 'success',
-      'business': 'warning',
-      'cultural': 'primary'
+      technology: "primary",
+      sports: "success",
+      arts: "warning",
+      academic: "primary",
+      social: "danger",
+      health: "success",
+      environment: "success",
+      business: "warning",
+      cultural: "primary",
     };
-    return colors[category?.toLowerCase()] || 'secondary';
+    return colors[category?.toLowerCase()] || "secondary";
   };
 
   return (
-    <Card
-      hover
-      className={`overflow-hidden group ${className}`}
-      padding="none"
-    >
+    <Card hover className={`overflow-hidden group ${className}`} padding="none">
       {/* Club Banner */}
       <div
         className="relative h-32 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800"
         style={{
           background: club.theme?.primary
-            ? `linear-gradient(135deg, ${club.theme.primary}, ${club.theme.secondary || club.theme.accent})`
-            : 'linear-gradient(135deg, var(--primary-accent-1), var(--primary-accent-2))'
+            ? `linear-gradient(135deg, ${club.theme.primary}, ${
+                club.theme.secondary || club.theme.accent
+              })`
+            : "linear-gradient(135deg, var(--primary-accent-1), var(--primary-accent-2))",
         }}
       >
         {club.banner && (
@@ -64,7 +69,9 @@ const ClubCard = ({ club, className = '' }) => {
             ) : (
               <span
                 className="text-lg font-bold text-white"
-                style={{ color: club.theme?.primary || 'var(--primary-accent-1)' }}
+                style={{
+                  color: club.theme?.primary || "var(--primary-accent-1)",
+                }}
               >
                 {club.name.charAt(0)}
               </span>
@@ -98,7 +105,11 @@ const ClubCard = ({ club, className = '' }) => {
       <div className="p-6 pt-8">
         {/* Category Badge */}
         {club.category && (
-          <Badge variant={getCategoryColor(club.category)} size="sm" className="mb-3">
+          <Badge
+            variant={getCategoryColor(club.category)}
+            size="sm"
+            className="mb-3"
+          >
             {club.category}
           </Badge>
         )}
@@ -123,7 +134,10 @@ const ClubCard = ({ club, className = '' }) => {
           {club.events && (
             <div className="flex items-center">
               <Calendar className="w-4 h-4 mr-1" />
-              <span>{Array.isArray(club.events) ? club.events.length : club.events} events</span>
+              <span>
+                {Array.isArray(club.events) ? club.events.length : club.events}{" "}
+                events
+              </span>
             </div>
           )}
         </div>
@@ -142,21 +156,29 @@ const ClubCard = ({ club, className = '' }) => {
             <div className="text-lg font-semibold text-gray-900 dark:text-white">
               {formatMemberCount(club.members)}
             </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">Members</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              Members
+            </div>
           </div>
 
           <div className="text-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
             <div className="text-lg font-semibold text-gray-900 dark:text-white">
-              {Array.isArray(club.events) ? club.events.length : club.events || 0}
+              {Array.isArray(club.events)
+                ? club.events.length
+                : club.events || 0}
             </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">Events</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              Events
+            </div>
           </div>
 
           <div className="text-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
             <div className="text-lg font-semibold text-gray-900 dark:text-white">
-              {club.rating ? club.rating.toFixed(1) : '4.8'}
+              {club.rating ? club.rating.toFixed(1) : "4.8"}
             </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">Rating</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              Rating
+            </div>
           </div>
         </div>
 
@@ -175,13 +197,25 @@ const ClubCard = ({ club, className = '' }) => {
 
           <Button
             variant={club.isFollowing ? "secondary" : "primary"}
-            style={!club.isFollowing ? {
-              backgroundColor: club.theme?.primary || 'var(--primary-accent-1)',
-              borderColor: club.theme?.primary || 'var(--primary-accent-1)'
-            } : {}}
-            icon={<Heart className={`w-4 h-4 ${club.isFollowing ? 'fill-current text-red-500' : ''}`} />}
+            style={
+              !club.isFollowing
+                ? {
+                    backgroundColor:
+                      club.theme?.primary || "var(--primary-accent-1)",
+                    borderColor:
+                      club.theme?.primary || "var(--primary-accent-1)",
+                  }
+                : {}
+            }
+            icon={
+              <Heart
+                className={`w-4 h-4 ${
+                  club.isFollowing ? "fill-current text-red-500" : ""
+                }`}
+              />
+            }
           >
-            {club.isFollowing ? 'Following' : 'Follow'}
+            {club.isFollowing ? "Following" : "Follow"}
           </Button>
         </div>
       </div>

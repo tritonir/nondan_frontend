@@ -1,36 +1,36 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import Button from '../components/ui/Button';
-import Card from '../components/ui/Card';
-import { Eye, EyeOff, Mail, Lock, User, Shield } from 'lucide-react';
-import nondanLogo from '../assets/nondan.svg';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import Button from "../components/ui/Button";
+import Card from "../components/ui/Card";
+import { Eye, EyeOff, Mail, Lock, User, Shield } from "lucide-react";
+import nondanLogo from "../assets/nondan.svg";
 
-const AuthPage = ({ type = 'login' }) => {
+const AuthPage = ({ type = "login" }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    role: 'student'
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "student",
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   const { login, signup } = useAuth();
   const navigate = useNavigate();
-  const isLogin = type === 'login';
+  const isLogin = type === "login";
 
   const handleChange = (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
     // Clear error when user starts typing
     if (errors[e.target.name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [e.target.name]: ''
+        [e.target.name]: "",
       }));
     }
   };
@@ -39,26 +39,26 @@ const AuthPage = ({ type = 'login' }) => {
     const newErrors = {};
 
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = "Email is invalid";
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = "Password must be at least 6 characters";
     }
 
     if (!isLogin) {
       if (!formData.name) {
-        newErrors.name = 'Name is required';
+        newErrors.name = "Name is required";
       }
 
       if (!formData.confirmPassword) {
-        newErrors.confirmPassword = 'Please confirm your password';
+        newErrors.confirmPassword = "Please confirm your password";
       } else if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = 'Passwords do not match';
+        newErrors.confirmPassword = "Passwords do not match";
       }
     }
 
@@ -74,21 +74,13 @@ const AuthPage = ({ type = 'login' }) => {
     setIsLoading(true);
 
     try {
-      let res;
-      let data;
-
       if (isLogin) {
-        res = await fetch("http://localhost:5000/api/user/signin", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password
-          })
+        // Use AuthContext login function
+        const result = await login({
+          email: formData.email,
+          password: formData.password,
+          role: 'student' // Default to student, or get from API response
         });
-
         data = await res.json();
 
         if (!data.error) {
@@ -97,42 +89,29 @@ const AuthPage = ({ type = 'login' }) => {
           return navigate(formData.role === "admin" ? "/admin/dashboard" : "/");
           // return navigate(formData.role === "admin" ? "/admin/dashboard" : "/student/dashboard");
 
-          
         }
       } else {
-        res = await fetch("http://localhost:5000/api/user/singup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            fullname: formData.name,
-            email: formData.email,
-            password: formData.password,
-            confirpassword: formData.confirmPassword,
-            avatar: formData.avatar || "",
-            role: formData.role
-          })
+        // Use AuthContext signup function
+        const result = await signup({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword,
+          role: formData.role
         });
 
-        data = await res.json();
+        if (result.success) {
+          navigate(result.user.role === "admin" ? "/admin/dashboard" : "/student/dashboard");
+        } else {
+          setErrors({ submit: result.error || "Signup failed" });
+        }
       }
-
-
-      if (!data.error) {
-        console.log("LKFLSDFSLFJLKSJD")
-        navigate(formData.role === "admin" ? "/admin/dashboard" : "/student/dashboard");
-      } else {
-        setErrors({ submit: data.error || "Authentication failed" });
-      }
-      } catch {
+    } catch (error) {
       setErrors({ submit: 'An unexpected error occurred' });
-
     } finally {
       setIsLoading(false);
     }
   };
-
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -140,15 +119,23 @@ const AuthPage = ({ type = 'login' }) => {
         {/* Header */}
         <div className="text-center">
           <Link to="/" className="inline-flex items-center mb-6">
-            <img src={nondanLogo} alt="Nondan Logo" className="w-12 h-12 rounded-xl" />
-            <span className="ml-3 text-2xl font-bold text-gray-900 dark:text-white">Nondan</span>
+            <img
+              src={nondanLogo}
+              alt="Nondan Logo"
+              className="w-12 h-12 rounded-xl"
+            />
+            <span className="ml-3 text-2xl font-bold text-gray-900 dark:text-white">
+              Nondan
+            </span>
           </Link>
 
           <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-            {isLogin ? 'Welcome back' : 'Create your account'}
+            {isLogin ? "Welcome back" : "Create your account"}
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            {isLogin ? 'Sign in to access your dashboard' : 'Join Nondan and discover amazing events'}
+            {isLogin
+              ? "Sign in to access your dashboard"
+              : "Join Nondan and discover amazing events"}
           </p>
         </div>
 
@@ -157,7 +144,10 @@ const AuthPage = ({ type = 'login' }) => {
           <form className="space-y-6" onSubmit={handleSubmit}>
             {!isLogin && (
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
                   Full Name
                 </label>
                 <input
@@ -169,12 +159,17 @@ const AuthPage = ({ type = 'login' }) => {
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent-1)] focus:border-transparent"
                   placeholder="Enter your full name"
                 />
-                {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+                {errors.name && (
+                  <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                )}
               </div>
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Email Address
               </label>
               <input
@@ -186,11 +181,16 @@ const AuthPage = ({ type = 'login' }) => {
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent-1)] focus:border-transparent"
                 placeholder="Enter your email"
               />
-              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+              )}
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Password
               </label>
               <input
@@ -202,13 +202,18 @@ const AuthPage = ({ type = 'login' }) => {
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent-1)] focus:border-transparent"
                 placeholder="Enter your password"
               />
-              {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+              )}
             </div>
 
             {!isLogin && (
               <>
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="confirmPassword"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
                     Confirm Password
                   </label>
                   <input
@@ -220,11 +225,18 @@ const AuthPage = ({ type = 'login' }) => {
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent-1)] focus:border-transparent"
                     placeholder="Confirm your password"
                   />
-                  {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
+                  {errors.confirmPassword && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.confirmPassword}
+                    </p>
+                  )}
                 </div>
 
                 <div>
-                  <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="role"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
                     I am a:
                   </label>
                   <select
@@ -243,7 +255,9 @@ const AuthPage = ({ type = 'login' }) => {
 
             {errors.submit && (
               <div className="bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 rounded-lg p-3">
-                <p className="text-sm text-red-600 dark:text-red-400">{errors.submit}</p>
+                <p className="text-sm text-red-600 dark:text-red-400">
+                  {errors.submit}
+                </p>
               </div>
             )}
 
@@ -253,7 +267,7 @@ const AuthPage = ({ type = 'login' }) => {
               loading={isLoading}
               disabled={isLoading}
             >
-              {isLogin ? 'Sign In' : 'Create Account'}
+              {isLogin ? "Sign In" : "Create Account"}
             </Button>
           </form>
 
@@ -264,17 +278,19 @@ const AuthPage = ({ type = 'login' }) => {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
-                  {isLogin ? "Don't have an account?" : "Already have an account?"}
+                  {isLogin
+                    ? "Don't have an account?"
+                    : "Already have an account?"}
                 </span>
               </div>
             </div>
 
             <div className="mt-6 text-center">
               <Link
-                to={isLogin ? '/auth/signup' : '/auth/login'}
+                to={isLogin ? "/auth/signup" : "/auth/login"}
                 className="text-[var(--primary-accent-1)] hover:text-[var(--primary-accent-2)] font-medium"
               >
-                {isLogin ? 'Create an account' : 'Sign in instead'}
+                {isLogin ? "Create an account" : "Sign in instead"}
               </Link>
             </div>
           </div>
