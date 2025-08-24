@@ -74,58 +74,38 @@ const AuthPage = ({ type = 'login' }) => {
     setIsLoading(true);
 
     try {
-      let res;
-      let data;
-
       if (isLogin) {
-        res = await fetch("http://localhost:5000/api/user/signin", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password
-          })
+        // Use AuthContext login function
+        const result = await login({
+          email: formData.email,
+          password: formData.password,
+          role: 'student' // Default to student, or get from API response
         });
 
-        data = await res.json();
-
-        if (!data.error) {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("userid", data.user.id);
-          return navigate(formData.role === "admin" ? "/admin/dashboard" : "/");
-          // return navigate(formData.role === "admin" ? "/admin/dashboard" : "/student/dashboard");
+        if (result.success) {
+          // Navigation will be handled by AuthContext or App.jsx
+          navigate(result.user.role === "admin" ? "/admin/dashboard" : "/student/dashboard");
+        } else {
+          setErrors({ submit: result.error || "Login failed" });
         }
       } else {
-        res = await fetch("http://localhost:5000/api/user/singup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            fullname: formData.name,
-            email: formData.email,
-            password: formData.password,
-            confirpassword: formData.confirmPassword,
-            avatar: formData.avatar || "",
-            role: formData.role
-          })
+        // Use AuthContext signup function
+        const result = await signup({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword,
+          role: formData.role
         });
 
-        data = await res.json();
+        if (result.success) {
+          navigate(result.user.role === "admin" ? "/admin/dashboard" : "/student/dashboard");
+        } else {
+          setErrors({ submit: result.error || "Signup failed" });
+        }
       }
-
-
-      if (!data.error) {
-        console.log("LKFLSDFSLFJLKSJD")
-        navigate(formData.role === "admin" ? "/admin/dashboard" : "/student/dashboard");
-      } else {
-        setErrors({ submit: data.error || "Authentication failed" });
-      }
-      } catch {
+    } catch (error) {
       setErrors({ submit: 'An unexpected error occurred' });
-
     } finally {
       setIsLoading(false);
     }
