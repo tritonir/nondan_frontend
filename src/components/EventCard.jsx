@@ -1,71 +1,91 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useClubTheme } from '../context/ThemeHooks';
-import { Calendar, Clock, MapPin, Users, ExternalLink } from 'lucide-react';
-import Badge from './ui/Badge';
-import Button from './ui/Button';
-import Card from './ui/Card';
+import React from "react";
+import { Link } from "react-router-dom";
+import { useClubTheme } from "../context/ThemeHooks";
+import { Calendar, Clock, MapPin, Users, ExternalLink } from "lucide-react";
+import Badge from "./ui/Badge";
+import Button from "./ui/Button";
+import Card from "./ui/Card";
+import { toast } from "react-toastify";
 
-const EventCard = ({ event, showClubInfo = true, className = '' }) => {
+const EventCard = ({ event, showClubInfo = true, className = "" }) => {
   const clubTheme = useClubTheme();
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
   };
 
   const formatTime = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
     });
   };
 
   const getStatusColor = (status) => {
     const colors = {
-      'upcoming': 'success',
-      'ongoing': 'warning',
-      'completed': 'secondary',
-      'cancelled': 'danger'
+      upcoming: "success",
+      ongoing: "warning",
+      completed: "secondary",
+      cancelled: "danger",
     };
-    return colors[status?.toLowerCase()] || 'secondary';
+    return colors[status?.toLowerCase()] || "secondary";
   };
 
   const getCategoryColor = (category) => {
     const colors = {
-      'technology': 'primary',
-      'sports': 'success',
-      'arts': 'warning',
-      'academic': 'primary',
-      'social': 'danger',
-      'health': 'success',
-      'environment': 'success',
-      'business': 'warning',
-      'cultural': 'primary'
+      technology: "primary",
+      sports: "success",
+      arts: "warning",
+      academic: "primary",
+      social: "danger",
+      health: "success",
+      environment: "success",
+      business: "warning",
+      cultural: "primary",
     };
-    return colors[category?.toLowerCase()] || 'secondary';
+    return colors[category?.toLowerCase()] || "secondary";
   };
 
-  const isUpcoming = event.status === 'upcoming';
-  const isPastEvent = event.status === 'completed';
+  const isUpcoming = event.status === "upcoming";
+  const isPastEvent = event.status === "completed";
+
+  const handleRegister = async (event_id) => {
+    try {
+      const res = await fetch(
+        "https://nondan-backend.vercel.app/api/event/regev",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("nondan-token")}`,
+          },
+          body: JSON.stringify({ event_id }),
+        }
+      );
+      const data = await res.json();
+      if (data.error) {
+        return toast.error(`Already in`);
+      }
+      toast.success(`Successfully Register`);
+    } catch {
+      toast.error(`Not added`);
+    }
+  };
 
   return (
-    <Card
-      hover
-      className={`overflow-hidden group ${className}`}
-      padding="none"
-    >
+    <Card hover className={`overflow-hidden group ${className}`} padding="none">
       {/* Event Image */}
       <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
-        {event.image ? (
+        {event.image_url ? (
           <img
-            src={event.image}
+            src={event.image_url}
             alt={event.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             loading="lazy"
@@ -74,7 +94,9 @@ const EventCard = ({ event, showClubInfo = true, className = '' }) => {
           <div
             className="w-full h-full flex items-center justify-center text-white"
             style={{
-              background: `linear-gradient(135deg, ${clubTheme?.primary || 'var(--primary-accent-1)'}, ${clubTheme?.accent || 'var(--primary-accent-2)'})`
+              background: `linear-gradient(135deg, ${
+                clubTheme?.primary || "var(--primary-accent-1)"
+              }, ${clubTheme?.accent || "var(--primary-accent-2)"})`,
             }}
           >
             <Calendar className="w-16 h-16 opacity-50" />
@@ -91,10 +113,10 @@ const EventCard = ({ event, showClubInfo = true, className = '' }) => {
         {/* Date Badge */}
         <div className="absolute top-3 left-3 bg-white dark:bg-gray-800 rounded-lg p-2 text-center shadow-md">
           <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
-            {formatDate(event.date).split(' ')[0]}
+            {formatDate(event.date).split(" ")[0]}
           </div>
           <div className="text-lg font-bold text-gray-900 dark:text-white">
-            {formatDate(event.date).split(' ')[1]}
+            {formatDate(event.date).split(" ")[1]}
           </div>
         </div>
       </div>
@@ -103,7 +125,11 @@ const EventCard = ({ event, showClubInfo = true, className = '' }) => {
       <div className="p-6">
         {/* Category */}
         {event.category && (
-          <Badge variant={getCategoryColor(event.category)} size="sm" className="mb-3">
+          <Badge
+            variant={getCategoryColor(event.category)}
+            size="sm"
+            className="mb-3"
+          >
             {event.category}
           </Badge>
         )}
@@ -118,11 +144,16 @@ const EventCard = ({ event, showClubInfo = true, className = '' }) => {
           <div className="flex items-center mb-3">
             <div
               className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2"
-              style={{ backgroundColor: clubTheme?.primary || 'var(--primary-accent-1)' }}
+              style={{
+                backgroundColor:
+                  clubTheme?.primary || "var(--primary-accent-1)",
+              }}
             >
               {event.club.name.charAt(0)}
             </div>
-            <span className="text-sm text-gray-600 dark:text-gray-400">{event.club.name}</span>
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              {event.club.name}
+            </span>
           </div>
         )}
 
@@ -145,7 +176,7 @@ const EventCard = ({ event, showClubInfo = true, className = '' }) => {
             </div>
           )}
 
-          {event.attendees && (
+          {/* {event.attendees && (
             <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
               <Users className="w-4 h-4 mr-2 flex-shrink-0" />
               <span>
@@ -153,7 +184,7 @@ const EventCard = ({ event, showClubInfo = true, className = '' }) => {
                 {event.attendees.max && ` / ${event.attendees.max}`} attendees
               </span>
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Tags */}
@@ -192,20 +223,19 @@ const EventCard = ({ event, showClubInfo = true, className = '' }) => {
             <Button
               className="flex-1"
               style={{
-                backgroundColor: clubTheme?.primary || 'var(--primary-accent-1)',
-                borderColor: clubTheme?.primary || 'var(--primary-accent-1)'
+                backgroundColor:
+                  clubTheme?.primary || "var(--primary-accent-1)",
+                borderColor: clubTheme?.primary || "var(--primary-accent-1)",
               }}
               disabled={event.isRegistered}
+              onClick={() => handleRegister(event._id)}
             >
-              {event.isRegistered ? 'Registered' : 'Register'}
+              {event.isRegistered ? "Registered" : "Register"}
             </Button>
           )}
 
           {isPastEvent && (
-            <Button
-              variant="secondary"
-              className="flex-1"
-            >
+            <Button variant="secondary" className="flex-1">
               View Summary
             </Button>
           )}
