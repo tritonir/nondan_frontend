@@ -21,7 +21,7 @@ const AdminEvents = () => {
       setLoading(true);
       setError('');
       try {
-        const res = await fetch('http://localhost:5000/api/event/');
+        const res = await fetch('http://nondan-backend.vercel.app/api/event/');
         // if (!res.ok) throw new Error('Failed to fetch events');
         const data = await res.json();
         setEvents(data);
@@ -52,7 +52,7 @@ const AdminEvents = () => {
   const confirmDelete = async () => {
     console.log(selectedEvent._id)
     try {
-      await fetch(`http://localhost:5000/api/event/${selectedEvent._id}`, {
+      await fetch(`http://nondan-backend.vercel.app/api/event/${selectedEvent._id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('nondan-token')}` }
       });

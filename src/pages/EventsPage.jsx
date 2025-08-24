@@ -16,7 +16,7 @@ const EventsPage = () => {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:5000/api/event/");
+        const res = await fetch("http://nondan-backend.vercel.app/api/event/");
         const data = await res.json();
 
         if (!res.ok) {
@@ -75,8 +75,8 @@ const EventsPage = () => {
                 key={category}
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedCategory === category
-                    ? "bg-[var(--primary-accent-1)] text-white"
-                    : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  ? "bg-[var(--primary-accent-1)] text-white"
+                  : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
               >
                 {category.charAt(0).toUpperCase() + category.slice(1)}
@@ -95,8 +95,8 @@ const EventsPage = () => {
             <button
               onClick={() => setViewMode("grid")}
               className={`p-2 rounded-lg ${viewMode === "grid"
-                  ? "bg-[var(--primary-accent-1)] text-white"
-                  : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                ? "bg-[var(--primary-accent-1)] text-white"
+                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
             >
               Grid
@@ -104,8 +104,8 @@ const EventsPage = () => {
             <button
               onClick={() => setViewMode("list")}
               className={`p-2 rounded-lg ${viewMode === "list"
-                  ? "bg-[var(--primary-accent-1)] text-white"
-                  : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                ? "bg-[var(--primary-accent-1)] text-white"
+                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
             >
               List
@@ -134,8 +134,8 @@ const EventsPage = () => {
             {filteredEvents.length > 0 ? (
               <div
                 className={`grid gap-6 ${viewMode === "grid"
-                    ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-                    : "grid-cols-1"
+                  ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+                  : "grid-cols-1"
                   }`}
               >
                 {filteredEvents.map((event) => (

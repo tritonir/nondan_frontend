@@ -44,7 +44,7 @@ const ClubManagement = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await fetch('http://localhost:5000/api/club/');
+      const response = await fetch('http://nondan-backend.vercel.app/api/club/');
       if (!response.ok) throw new Error('Failed to fetch clubs');
 
       const data = await response.json();
@@ -194,8 +194,8 @@ const ClubManagement = () => {
                   });
                 }}
                 className={`p-4 border rounded-lg cursor-pointer transition-colors ${selectedClub?._id === club._id
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                   }`}
               >
                 <h3 className="font-semibold text-gray-900 dark:text-white">{club.name}</h3>
