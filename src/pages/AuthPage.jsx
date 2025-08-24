@@ -72,54 +72,46 @@ const AuthPage = ({ type = "login" }) => {
     setIsLoading(true);
 
     try {
-      let res;
-      let data;
-
       if (isLogin) {
-        res = await fetch("https://nondan-backend.vercel.app/api/user/signin", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-          }),
+        // Use AuthContext login function
+        const result = await login({
+          email: formData.email,
+          password: formData.password,
         });
 
-        data = await res.json();
-        if (!data.error) {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("userid", data.user.id);
-          return navigate(formData.role === "Club Member" ? "/admin/dashboard" : "/");
-          // return navigate(formData.role === "admin" ? "/admin/dashboard" : "/student/dashboard");
+        if (result.success) {
+          // Navigate based on user role from the result
+          navigate(
+            result.user.role === "admin"
+              ? "/admin/dashboard"
+              : "/student/dashboard"
+          );
+        } else {
+          setErrors({ submit: result.error || "Login failed" });
         }
       } else {
-        res = await fetch("https://nondan-backend.vercel.app/api/user/singup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            fullname: formData.name,
-            email: formData.email,
-            password: formData.password,
-            confirpassword: formData.confirmPassword,
-            avatar: formData.avatar || "",
-            role: formData.role,
-          }),
+        // Use AuthContext signup function
+        const result = await signup({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword,
+          role: formData.role,
         });
 
-        data = await res.json();
+        if (result.success) {
+          // Navigate based on user role from the result
+          navigate(
+            result.user.role === "admin"
+              ? "/admin/dashboard"
+              : "/student/dashboard"
+          );
+        } else {
+          setErrors({ submit: result.error || "Signup failed" });
+        }
       }
-
-      if (!data.error) {
-        navigate(formData.role === "Club Member" ? "/admin/dashboard" : "/student/dashboard");
-
-      } else {
-        setErrors({ submit: data.error || "Authentication failed" });
-      }
-    } catch {
+    } catch (error) {
+      console.error('Authentication error:', error);
       setErrors({ submit: "An unexpected error occurred" });
     } finally {
       setIsLoading(false);
@@ -260,7 +252,7 @@ const AuthPage = ({ type = "login" }) => {
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent-1)] focus:border-transparent"
                   >
                     <option value="student">Student</option>
-                    <option value="Club Member">Club Member</option>
+                    <option value="admin">Club Member</option>
                   </select>
                 </div>
               </>

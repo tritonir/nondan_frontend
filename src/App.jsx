@@ -18,6 +18,7 @@ const ClubsPage = lazy(() => import('./pages/ClubsPage'));
 const ClubDetailPage = lazy(() => import('./pages/ClubDetailPage'));
 const EventDetailPage = lazy(() => import('./pages/EventDetailPage'));
 const BlogPage = lazy(() => import('./pages/BlogPage'));
+const BlogDetailPage = lazy(() => import('./pages/BlogDetailPage'));
 const Settings = lazy(() => import('./pages/Settings'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const VerifyCertificate = lazy(() => import('./pages/VerifyCertificate'));
@@ -27,18 +28,24 @@ const StudentDashboard = lazy(() => import('./pages/student/Dashboard'));
 const StudentProfile = lazy(() => import('./pages/student/Profile'));
 const StudentEvents = lazy(() => import('./pages/student/Events'));
 const StudentCertificates = lazy(() => import('./pages/student/Certificates'));
+const StudentMyBlogs = lazy(() => import('./pages/student/MyBlogs'));
 
 // Admin pages
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
 const AdminProfile = lazy(() => import('./pages/admin/Profile'));
 const AdminEvents = lazy(() => import('./pages/admin/Events'));
 const CreateEvent = lazy(() => import('./pages/admin/CreateEvent'));
+const CreateClub = lazy(() => import('./pages/admin/CreateClub'));
 const EditEvent = lazy(() => import('./pages/admin/EditEvent'));
 const AttendeeManagement = lazy(() => import('./pages/admin/AttendeeManagement'));
 const ClubManagement = lazy(() => import('./pages/admin/ClubManagement'));
 const Analytics = lazy(() => import('./pages/admin/Analytics'));
 const Scanner = lazy(() => import('./pages/admin/Scanner'));
 const CertificateCustomization = lazy(() => import('./pages/admin/CertificateCustomization'));
+const AdminMyBlogs = lazy(() => import('./pages/admin/MyBlogs'));
+
+// Shared pages
+const WriteBlog = lazy(() => import('./pages/WriteBlog'));
 
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredRole = null }) => {
@@ -89,167 +96,148 @@ const App = () => {
                 <Route path="/events" element={<EventsPage />} />
                 <Route path="/clubs" element={<ClubsPage />} />
                 <Route path="/blog" element={<BlogPage />} />
+                <Route path="/blog/:id" element={<BlogDetailPage />} />
                 <Route path="/club/:id" element={<ClubDetailPage />} />
                 <Route path="/event/:id" element={<EventDetailPage />} />
                 <Route path="/verify/:certificateId" element={<VerifyCertificate />} />
 
-                {/* Auth Routes (redirect if authenticated) */}
                 <Route
-                  path="/auth"
-                  element={
-                    <PublicRoute>
-                      <AuthPage type="login" />
-                    </PublicRoute>
-                  }
+                    path="/auth"
+                    element={
+                      <PublicRoute>
+                        <AuthPage type="login" />
+                      </PublicRoute>
+                    }
                 />
                 <Route
-                  path="/auth/login"
-                  element={
-                    <PublicRoute>
-                      <AuthPage type="login" />
-                    </PublicRoute>
-                  }
+                    path="/auth/login"
+                    element={
+                      <PublicRoute>
+                        <AuthPage type="login" />
+                      </PublicRoute>
+                    }
                 />
                 <Route
-                  path="/auth/signup"
-                  element={
-                    <PublicRoute>
-                      <AuthPage type="signup" />
-                    </PublicRoute>
-                  }
+                    path="/auth/signup"
+                    element={
+                      <PublicRoute>
+                        <AuthPage type="signup" />
+                      </PublicRoute>
+                    }
                 />
 
-                {/* Protected Routes */}
-                <Route
-                  path="/settings"
-                  element={
-                    <ProtectedRoute>
-                      <Settings />
-                    </ProtectedRoute>
-                  }
-                />
+                {/* Blog Writing Routes (Protected) */}
+                <Route path="/write-blog" element={
+                  <ProtectedRoute>
+                    <WriteBlog />
+                  </ProtectedRoute>
+                } />
+                <Route path="/write-blog/:id" element={
+                  <ProtectedRoute>
+                    <WriteBlog />
+                  </ProtectedRoute>
+                } />
 
                 {/* Student Routes */}
-                <Route
-                  path="/student/dashboard"
-                  element={
-                    <ProtectedRoute requiredRole="student">
-                      <StudentDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/student/profile"
-                  element={
-                    <ProtectedRoute requiredRole="student">
-                      <StudentProfile />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/student/events"
-                  element={
-                    <ProtectedRoute requiredRole="student">
-                      <StudentEvents />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/student/certificates"
-                  element={
-                    <ProtectedRoute requiredRole="student">
-                      <StudentCertificates />
-                    </ProtectedRoute>
-                  }
-                />
+                <Route path="/student/dashboard" element={
+                  <ProtectedRoute requiredRole="student">
+                    <StudentDashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/student/profile" element={
+                  <ProtectedRoute requiredRole="student">
+                    <StudentProfile />
+                  </ProtectedRoute>
+                } />
+                <Route path="/student/events" element={
+                  <ProtectedRoute requiredRole="student">
+                    <StudentEvents />
+                  </ProtectedRoute>
+                } />
+                <Route path="/student/certificates" element={
+                  <ProtectedRoute requiredRole="student">
+                    <StudentCertificates />
+                  </ProtectedRoute>
+                } />
+                <Route path="/student/my-blogs" element={
+                  <ProtectedRoute requiredRole="student">
+                    <StudentMyBlogs />
+                  </ProtectedRoute>
+                } />
 
                 {/* Admin Routes */}
-                <Route
-                  path="/admin/dashboard"
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <AdminDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/profile"
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <AdminProfile />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/events"
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <AdminEvents />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/create"
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <CreateEvent />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/edit/:id"
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <EditEvent />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/attendees/:eventId"
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <AttendeeManagement />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/clubs"
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <ClubManagement />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/analytics"
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <Analytics />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/scanner"
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <Scanner />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/certificate-customization"
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <CertificateCustomization />
-                    </ProtectedRoute>
-                  }
-                />
+                <Route path="/admin/dashboard" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/profile" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminProfile />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/events" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminEvents />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/events/create" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <CreateEvent />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/create-club" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <CreateClub />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/club-management" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <ClubManagement />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/events/:id/edit" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <EditEvent />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/events/:id/attendees" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AttendeeManagement />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/clubs" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <ClubManagement />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/analytics" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <Analytics />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/scanner" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <Scanner />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/certificates" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <CertificateCustomization />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/my-blogs" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminMyBlogs />
+                  </ProtectedRoute>
+                } />
 
-                {/* Redirect old admin panel route */}
-                <Route path="/admin/panel" element={<Navigate to="/admin/dashboard" replace />} />
-
-                {/* Unauthorized page */}
-                <Route path="/unauthorized" element={<NotFound message="You don't have permission to access this page." />} />
+                {/* Settings Route (Protected) */}
+                <Route path="/settings" element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                } />
 
                 {/* 404 Route */}
                 <Route path="*" element={<NotFound />} />
@@ -257,11 +245,9 @@ const App = () => {
             </Suspense>
           </main>
 
-          {/* Global Components */}
-          <ChatbotToggle />
           <Footer />
+          <ChatbotToggle />
 
-          {/* Toast Notifications */}
           <ToastContainer
             position="top-right"
             autoClose={5000}
@@ -272,7 +258,7 @@ const App = () => {
             pauseOnFocusLoss
             draggable
             pauseOnHover
-            theme="colored"
+            theme="light"
           />
         </div>
       </AuthProvider>

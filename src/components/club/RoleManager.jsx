@@ -1,256 +1,296 @@
 import React, { useState } from 'react';
-import { UserPlus, Mail, RefreshCw, X, Clock } from 'lucide-react';
-import { useClubRoles } from '../../hooks/useClubRoles';
-import MemberList from './MemberList';
-import InviteModal from './InviteModal';
+import {
+  Shield,
+  ShieldCheck,
+  Crown,
+  User,
+  Edit3,
+  Settings,
+  AlertTriangle,
+  Info
+} from 'lucide-react';
+import Button from '../ui/Button';
+import Card from '../ui/Card';
+import Badge from '../ui/Badge';
 
-const RoleManager = ({ clubId, currentUserId }) => {
-  const [showInviteModal, setShowInviteModal] = useState(false);
-  const [activeTab, setActiveTab] = useState('members');
+const RoleManager = ({ clubId, currentUserRole, onRoleUpdate }) => {
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const {
-    members,
-    invitations,
-    loading,
-    error,
-    userRole,
-    hasPermission,
-    inviteMember,
-    changeUserRole,
-    removeMember,
-    cancelInvitation,
-    resendInvitation
-  } = useClubRoles(clubId, currentUserId);
+  const roles = [
+    {
+      value: 'admin',
+      label: 'Admin',
+      icon: Crown,
+      color: 'text-red-600 dark:text-red-400',
+      bgColor: 'bg-red-100 dark:bg-red-900',
+      permissions: [
+        'Full club management access',
+        'Invite and remove members',
+        'Change member roles',
+        'Create and manage events',
+        'Delete club',
+        'Manage club settings'
+      ],
+      description: 'Complete control over the club and all its activities'
+    },
+    {
+      value: 'moderator',
+      label: 'Moderator',
+      icon: ShieldCheck,
+      color: 'text-purple-600 dark:text-purple-400',
+      bgColor: 'bg-purple-100 dark:bg-purple-900',
+      permissions: [
+        'Invite and remove members',
+        'Change contributor/editor roles',
+        'Create and manage events',
+        'Moderate discussions',
+        'Manage event attendance'
+      ],
+      description: 'Manage members and events with elevated privileges'
+    },
+    {
+      value: 'editor',
+      label: 'Editor',
+      icon: Edit3,
+      color: 'text-blue-600 dark:text-blue-400',
+      bgColor: 'bg-blue-100 dark:bg-blue-900',
+      permissions: [
+        'Create and edit events',
+        'Manage event details',
+        'View member list',
+        'Edit club content',
+        'Moderate comments'
+      ],
+      description: 'Create and edit club content and events'
+    },
+    {
+      value: 'contributor',
+      label: 'Contributor',
+      icon: User,
+      color: 'text-green-600 dark:text-green-400',
+      bgColor: 'bg-green-100 dark:bg-green-900',
+      permissions: [
+        'Create events',
+        'Join events',
+        'View member list',
+        'Comment on posts',
+        'Basic club participation'
+      ],
+      description: 'Basic membership with event creation privileges'
+    }
+  ];
 
-  const handleInviteMember = async (email, role) => {
-    return await inviteMember(email, role);
+  const getCurrentRoleData = () => {
+    return roles.find(role => role.value === currentUserRole) || roles[3];
   };
 
-  const handleRoleChange = async (memberId, newRole) => {
-    const result = await changeUserRole(memberId, newRole);
-    if (!result.success) {
-      alert(result.error || 'Failed to change role');
+  const canPromoteToRole = (targetRole) => {
+    const hierarchy = { admin: 4, moderator: 3, editor: 2, contributor: 1 };
+    return hierarchy[currentUserRole] > hierarchy[targetRole];
+  };
+
+  const handleRoleChange = async (newRole) => {
+    if (!canPromoteToRole(newRole)) {
+      alert('You cannot assign a role higher than or equal to your own');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await onRoleUpdate(newRole);
+      setSelectedRole(null);
+    } catch (error) {
+      console.error('Failed to update role:', error);
+      alert('Failed to update role. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleRemoveMember = async (memberId) => {
-    const result = await removeMember(memberId);
-    if (!result.success) {
-      alert(result.error || 'Failed to remove member');
-    }
-  };
-
-  const handleCancelInvitation = async (invitationId) => {
-    const result = await cancelInvitation(invitationId);
-    if (!result.success) {
-      alert(result.error || 'Failed to cancel invitation');
-    }
-  };
-
-  const handleResendInvitation = async (invitationId) => {
-    const result = await resendInvitation(invitationId);
-    if (result.success) {
-      alert('Invitation resent successfully!');
-    } else {
-      alert(result.error || 'Failed to resend invitation');
-    }
-  };
-
-  const getInvitationStatus = (invitation) => {
-    const expiresAt = new Date(invitation.expiresAt);
-    const now = new Date();
-
-    if (now > expiresAt) {
-      return { status: 'expired', color: 'text-red-600 dark:text-red-400' };
-    }
-
-    switch (invitation.status) {
-      case 'pending':
-        return { status: 'pending', color: 'text-yellow-600 dark:text-yellow-400' };
-      case 'accepted':
-        return { status: 'accepted', color: 'text-green-600 dark:text-green-400' };
-      case 'declined':
-        return { status: 'declined', color: 'text-red-600 dark:text-red-400' };
-      default:
-        return { status: 'unknown', color: 'text-gray-600 dark:text-gray-400' };
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-        <span className="ml-2 text-gray-600 dark:text-gray-400">Loading members...</span>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-        <p className="text-red-600 dark:text-red-400">{error}</p>
-      </div>
-    );
-  }
-
-  // Only show role manager to users with appropriate permissions
-  if (!userRole || (!hasPermission('canInviteMembers') && !hasPermission('canManageRoles'))) {
-    return (
-      <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 text-center">
-        <p className="text-gray-600 dark:text-gray-400">
-          You don't have permission to manage club members.
-        </p>
-      </div>
-    );
-  }
+  const currentRole = getCurrentRoleData();
+  const CurrentRoleIcon = currentRole.icon;
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Club Role Management
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            Manage club members and their permissions
-          </p>
+      {/* Current Role Display */}
+      <Card className="p-6">
+        <div className="flex items-center gap-4 mb-4">
+          <div className={`p-3 rounded-lg ${currentRole.bgColor}`}>
+            <CurrentRoleIcon className={`h-6 w-6 ${currentRole.color}`} />
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              Your Role: {currentRole.label}
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400">
+              {currentRole.description}
+            </p>
+          </div>
         </div>
 
-        {hasPermission('canInviteMembers') && (
-          <button
-            onClick={() => setShowInviteModal(true)}
-            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-          >
-            <UserPlus className="h-4 w-4 mr-2" />
-            Invite Member
-          </button>
-        )}
-      </div>
+        <div className="space-y-2">
+          <h3 className="font-medium text-gray-900 dark:text-white mb-3">
+            Your Permissions:
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {currentRole.permissions.map((permission, index) => (
+              <div key={index} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                {permission}
+              </div>
+            ))}
+          </div>
+        </div>
+      </Card>
 
-      {/* Tab Navigation */}
-      <div className="border-b border-gray-200 dark:border-gray-700">
-        <nav className="-mb-px flex space-x-8">
-          <button
-            onClick={() => setActiveTab('members')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'members'
-                ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
-                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-            }`}
-          >
-            Members ({members.length})
-          </button>
-
-          {hasPermission('canInviteMembers') && (
-            <button
-              onClick={() => setActiveTab('invitations')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'invitations'
-                  ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
-                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-              }`}
-            >
-              Invitations ({invitations.length})
-            </button>
-          )}
-        </nav>
-      </div>
-
-      {/* Tab Content */}
-      {activeTab === 'members' ? (
-        <MemberList
-          members={members}
-          currentUserRole={userRole}
-          onRoleChange={handleRoleChange}
-          onRemoveMember={handleRemoveMember}
-          hasPermission={hasPermission}
-        />
-      ) : (
-        /* Invitations List */
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Pending Invitations
-            </h3>
+      {/* Role Management (for admins/moderators) */}
+      {(currentUserRole === 'admin' || currentUserRole === 'moderator') && (
+        <Card className="p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-orange-100 dark:bg-orange-900 rounded-lg">
+              <Settings className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Role Management
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                Manage roles and permissions for club members
+              </p>
+            </div>
           </div>
 
-          <div className="divide-y divide-gray-200 dark:divide-gray-700">
-            {invitations.map((invitation) => {
-              const statusInfo = getInvitationStatus(invitation);
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {roles.map((role) => {
+              const RoleIcon = role.icon;
+              const canAssign = canPromoteToRole(role.value);
 
               return (
-                <div key={invitation.id} className="p-6 flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
-                      <Mail className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                <div
+                  key={role.value}
+                  className={`p-4 border-2 rounded-lg transition-all ${
+                    selectedRole === role.value
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  } ${!canAssign ? 'opacity-50' : 'cursor-pointer'}`}
+                  onClick={() => canAssign && setSelectedRole(role.value)}
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`p-2 rounded-lg ${role.bgColor}`}>
+                      <RoleIcon className={`h-4 w-4 ${role.color}`} />
                     </div>
-
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-900 dark:text-white">
-                        {invitation.email}
-                      </h4>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Role: {invitation.role.charAt(0).toUpperCase() + invitation.role.slice(1)}
-                      </p>
-                      <div className="flex items-center text-xs text-gray-400 dark:text-gray-500">
-                        <Clock className="h-3 w-3 mr-1" />
-                        Sent {new Date(invitation.invitedAt).toLocaleDateString()}
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-medium text-gray-900 dark:text-white">
+                          {role.label}
+                        </h3>
+                        {!canAssign && (
+                          <Badge variant="secondary" className="text-xs">
+                            Restricted
+                          </Badge>
+                        )}
                       </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {role.description}
+                      </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-3">
-                    <span className={`text-xs font-medium px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 ${statusInfo.color}`}>
-                      {statusInfo.status.charAt(0).toUpperCase() + statusInfo.status.slice(1)}
-                    </span>
-
-                    <div className="flex space-x-2">
-                      {statusInfo.status === 'pending' && (
-                        <button
-                          onClick={() => handleResendInvitation(invitation.id)}
-                          className="p-1 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400"
-                          title="Resend invitation"
-                        >
-                          <RefreshCw className="h-4 w-4" />
-                        </button>
-                      )}
-
-                      <button
-                        onClick={() => handleCancelInvitation(invitation.id)}
-                        className="p-1 text-gray-400 hover:text-red-600 dark:hover:text-red-400"
-                        title="Cancel invitation"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    </div>
+                  <div className="space-y-1">
+                    {role.permissions.slice(0, 3).map((permission, index) => (
+                      <div key={index} className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                        <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                        {permission}
+                      </div>
+                    ))}
+                    {role.permissions.length > 3 && (
+                      <div className="text-xs text-gray-400">
+                        +{role.permissions.length - 3} more permissions
+                      </div>
+                    )}
                   </div>
                 </div>
               );
             })}
-
-            {invitations.length === 0 && (
-              <div className="p-8 text-center">
-                <Mail className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-1">
-                  No pending invitations
-                </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Invite new members to expand your club community.
-                </p>
-              </div>
-            )}
           </div>
-        </div>
+
+          {selectedRole && (
+            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <div className="flex items-start gap-3">
+                <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+                <div className="flex-1">
+                  <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
+                    Assign {roles.find(r => r.value === selectedRole)?.label} Role
+                  </h4>
+                  <p className="text-sm text-blue-700 dark:text-blue-300 mb-4">
+                    You can assign this role to members when inviting them or through the member management interface.
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      onClick={() => handleRoleChange(selectedRole)}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? 'Updating...' : 'Confirm Assignment'}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setSelectedRole(null)}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </Card>
       )}
 
-      {/* Invite Modal */}
-      <InviteModal
-        isOpen={showInviteModal}
-        onClose={() => setShowInviteModal(false)}
-        clubId={clubId}
-        onInvite={handleInviteMember}
-      />
+      {/* Role Hierarchy Info */}
+      <Card className="p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+            <AlertTriangle className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+          </div>
+          <h3 className="font-medium text-gray-900 dark:text-white">
+            Role Hierarchy
+          </h3>
+        </div>
+
+        <div className="space-y-3">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Roles are organized in a hierarchy where higher roles can manage lower roles:
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 text-sm">
+            {roles.map((role, index) => {
+              const RoleIcon = role.icon;
+              return (
+                <React.Fragment key={role.value}>
+                  <div className="flex items-center gap-2">
+                    <RoleIcon className={`h-4 w-4 ${role.color}`} />
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {role.label}
+                    </span>
+                  </div>
+                  {index < roles.length - 1 && (
+                    <span className="text-gray-400 hidden sm:inline">→</span>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
+
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            • Admins can manage all roles<br/>
+            • Moderators can manage Editors and Contributors<br/>
+            • Members cannot change their own roles
+          </div>
+        </div>
+      </Card>
     </div>
   );
 };

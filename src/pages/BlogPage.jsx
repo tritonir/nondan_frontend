@@ -20,107 +20,34 @@ import Button from '../components/ui/Button';
 import Card, { CardHeader, CardTitle, CardDescription } from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import Avatar from '../components/ui/Avatar';
+import { BlogService, blogCategories } from '../data/blogData';
 
 const BlogPage = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock blog data
-  const mockBlogs = [
-    {
-      id: 1,
-      title: 'My Experience at the Tech Innovation Summit',
-      excerpt: 'Last week, I attended the most amazing tech conference organized by our Tech Club. Here are my key takeaways and insights...',
-      content: 'Full blog content here...',
-      author: {
-        name: 'Alex Chen',
-        avatar: 'https://ui-avatars.com/api/?name=Alex+Chen&background=CF0F47&color=fff',
-        role: 'student',
-        club: 'Tech Club'
-      },
-      category: 'Technology',
-      tags: ['conference', 'technology', 'learning', 'networking'],
-      publishedAt: '2024-03-15T10:30:00Z',
-      likes: 45,
-      comments: 12,
-      views: 234,
-      readTime: 5,
-      featured: true
-    },
-    {
-      id: 2,
-      title: 'Building Communities: My Journey as Arts Club President',
-      excerpt: 'Leadership lessons learned while organizing cultural events and fostering creativity among students...',
-      content: 'Full blog content here...',
-      author: {
-        name: 'Maria Rodriguez',
-        avatar: 'https://ui-avatars.com/api/?name=Maria+Rodriguez&background=FF0B55&color=fff',
-        role: 'student',
-        club: 'Arts Club'
-      },
-      category: 'Leadership',
-      tags: ['leadership', 'arts', 'community', 'events'],
-      publishedAt: '2024-03-14T14:20:00Z',
-      likes: 32,
-      comments: 8,
-      views: 187,
-      readTime: 4,
-      featured: false
-    },
-    {
-      id: 3,
-      title: 'Sustainable Campus Living: Tips from Environmental Club',
-      excerpt: 'Simple ways students can contribute to environmental sustainability on campus and beyond...',
-      content: 'Full blog content here...',
-      author: {
-        name: 'David Kim',
-        avatar: 'https://ui-avatars.com/api/?name=David+Kim&background=CF0F47&color=fff',
-        role: 'student',
-        club: 'Eco Club'
-      },
-      category: 'Environment',
-      tags: ['sustainability', 'environment', 'tips', 'campus'],
-      publishedAt: '2024-03-13T09:15:00Z',
-      likes: 28,
-      comments: 15,
-      views: 156,
-      readTime: 6,
-      featured: false
-    },
-    {
-      id: 4,
-      title: 'How Sports Shaped My Leadership Skills',
-      excerpt: 'Reflecting on how participating in sports events taught me valuable life lessons about teamwork and perseverance...',
-      content: 'Full blog content here...',
-      author: {
-        name: 'Sarah Johnson',
-        avatar: 'https://ui-avatars.com/api/?name=Sarah+Johnson&background=FF0B55&color=fff',
-        role: 'student',
-        club: 'Sports Club'
-      },
-      category: 'Sports',
-      tags: ['sports', 'leadership', 'teamwork', 'personal growth'],
-      publishedAt: '2024-03-12T16:45:00Z',
-      likes: 41,
-      comments: 9,
-      views: 203,
-      readTime: 3,
-      featured: true
+  useEffect(() => {
+    loadBlogs();
+  }, []);
+
+  const loadBlogs = async () => {
+    try {
+      setLoading(true);
+      const allBlogs = await BlogService.getAllBlogs();
+      // Only show published blogs on public page
+      const publishedBlogs = allBlogs.filter(blog => blog.status === 'published');
+      setBlogs(publishedBlogs);
+    } catch (error) {
+      console.error('Error loading blogs:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
-
-  const categories = [
-    { value: 'all', label: 'All Categories' },
-    { value: 'Technology', label: 'Technology' },
-    { value: 'Leadership', label: 'Leadership' },
-    { value: 'Environment', label: 'Environment' },
-    { value: 'Sports', label: 'Sports' },
-    { value: 'Arts', label: 'Arts' },
-    { value: 'Academic', label: 'Academic' }
-  ];
+  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -131,7 +58,7 @@ const BlogPage = () => {
     });
   };
 
-  const filteredBlogs = mockBlogs.filter(blog => {
+  const filteredBlogs = blogs.filter(blog => {
     const matchesSearch = blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          blog.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          blog.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -150,76 +77,91 @@ const BlogPage = () => {
     return 0;
   });
 
-  const featuredBlogs = mockBlogs.filter(blog => blog.featured);
-
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <section className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center">
-            <div className="flex items-center justify-center mb-4">
-              <BookOpen className="w-8 h-8 mr-3" style={{ color: 'var(--primary-accent-1)' }} />
-              <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
-                Student Blogs
-              </h1>
-            </div>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
-              Share your experiences, insights, and stories with the campus community.
-              Learn from fellow students and club members.
-            </p>
-
-            {isAuthenticated && (
-              <Button
-                size="lg"
-                onClick={() => navigate('/blog/create')}
-                icon={<PenTool className="w-5 h-5" />}
-              >
-                Write a Blog
-              </Button>
-            )}
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-gray-500 dark:text-gray-400">Loading blogs...</div>
           </div>
         </div>
-      </section>
+      </div>
+    );
+  }
 
-      {/* Search and Filters */}
-      <section className="py-8 bg-white dark:bg-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="flex items-center justify-center mb-6">
+            <BookOpen className="h-12 w-12 text-[var(--primary-accent-1)] mr-4" />
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
+              Community Blog
+            </h1>
+          </div>
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            Discover insights, experiences, and stories from our vibrant community of students and club members
+          </p>
+
+          {isAuthenticated && (
+            <div className="mt-8">
+              <Button
+                onClick={() => navigate(isAdmin ? '/admin/write-blog' : '/student/write-blog')}
+                className="mr-4"
+              >
+                <PenTool className="h-5 w-5 mr-2" />
+                Write a Blog
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate(isAdmin ? '/admin/my-blogs' : '/student/my-blogs')}
+              >
+                <User className="h-5 w-5 mr-2" />
+                My Blogs
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {/* Search and Filters */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-8">
+          <div className="flex flex-col lg:flex-row gap-4">
             {/* Search */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
               <input
                 type="text"
-                placeholder="Search blogs, tags, or topics..."
+                placeholder="Search blogs, topics, or tags..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:border-transparent"
-                style={{ '--tw-ring-color': 'var(--primary-accent-1)' }}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-accent-1)] focus:border-transparent"
               />
             </div>
 
-            <div className="flex gap-4">
-              {/* Category Filter */}
+            {/* Category Filter */}
+            <div className="flex items-center gap-2">
+              <Filter className="h-5 w-5 text-gray-400" />
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:border-transparent"
-                style={{ '--tw-ring-color': 'var(--primary-accent-1)' }}
+                className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-accent-1)] focus:border-transparent"
               >
-                {categories.map(category => (
+                {blogCategories.map(category => (
                   <option key={category.value} value={category.value}>
                     {category.label}
                   </option>
                 ))}
               </select>
+            </div>
 
-              {/* Sort */}
+            {/* Sort */}
+            <div className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-gray-400" />
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:border-transparent"
-                style={{ '--tw-ring-color': 'var(--primary-accent-1)' }}
+                className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-accent-1)] focus:border-transparent"
               >
                 <option value="recent">Most Recent</option>
                 <option value="popular">Most Popular</option>
@@ -228,216 +170,134 @@ const BlogPage = () => {
             </div>
           </div>
         </div>
-      </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            {/* Featured Blogs */}
-            {featuredBlogs.length > 0 && (
-              <div className="mb-12">
-                <div className="flex items-center mb-6">
-                  <TrendingUp className="w-5 h-5 mr-2" style={{ color: 'var(--primary-accent-1)' }} />
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Featured Stories</h2>
-                </div>
-
-                <div className="grid gap-6">
-                  {featuredBlogs.map(blog => (
-                    <Card key={blog.id} hover className="overflow-hidden">
-                      <div className="p-6">
-                        <div className="flex items-center justify-between mb-4">
-                          <Badge
-                            variant="primary"
-                            className="text-white"
-                            style={{ backgroundColor: 'var(--primary-accent-1)' }}
-                          >
-                            Featured
-                          </Badge>
-                          <Badge variant="secondary">{blog.category}</Badge>
-                        </div>
-
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
-                          {blog.title}
-                        </h3>
-
-                        <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
-                          {blog.excerpt}
-                        </p>
-
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <Avatar src={blog.author.avatar} alt={blog.author.name} size="sm" />
-                            <div className="ml-3">
-                              <p className="text-sm font-medium text-gray-900 dark:text-white">
-                                {blog.author.name}
-                              </p>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">
-                                {blog.author.club} • {formatDate(blog.publishedAt)}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
-                            <div className="flex items-center">
-                              <Clock className="w-4 h-4 mr-1" />
-                              {blog.readTime} min
-                            </div>
-                            <div className="flex items-center">
-                              <Heart className="w-4 h-4 mr-1" />
-                              {blog.likes}
-                            </div>
-                            <div className="flex items-center">
-                              <Eye className="w-4 h-4 mr-1" />
-                              {blog.views}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* All Blogs */}
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                All Stories ({sortedBlogs.length})
-              </h2>
-
-              <div className="space-y-6">
-                {sortedBlogs.map(blog => (
-                  <Card key={blog.id} hover className="overflow-hidden">
-                    <div className="p-6">
-                      <div className="flex items-center justify-between mb-3">
-                        <Badge variant="secondary">{blog.category}</Badge>
-                        <div className="flex flex-wrap gap-1">
-                          {blog.tags.slice(0, 2).map(tag => (
-                            <span
-                              key={tag}
-                              className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs rounded-full"
-                            >
-                              #{tag}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
-                        {blog.title}
-                      </h3>
-
-                      <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-                        {blog.excerpt}
-                      </p>
-
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <Avatar src={blog.author.avatar} alt={blog.author.name} size="sm" />
-                          <div className="ml-3">
-                            <p className="text-sm font-medium text-gray-900 dark:text-white">
-                              {blog.author.name}
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {formatDate(blog.publishedAt)} • {blog.readTime} min read
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center space-x-4">
-                          <button className="flex items-center text-gray-500 hover:text-red-500 transition-colors">
-                            <Heart className="w-4 h-4 mr-1" />
-                            {blog.likes}
-                          </button>
-                          <button className="flex items-center text-gray-500 hover:text-blue-500 transition-colors">
-                            <MessageCircle className="w-4 h-4 mr-1" />
-                            {blog.comments}
-                          </button>
-                          <button className="flex items-center text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
-                            <Share className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
+        {/* Blog Grid */}
+        {sortedBlogs.length === 0 ? (
+          <Card className="text-center py-12">
+            <div className="flex flex-col items-center">
+              <BookOpen className="h-16 w-16 text-gray-400 mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                {searchTerm || selectedCategory !== 'all' ? 'No blogs found' : 'No blogs yet'}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 max-w-sm">
+                {searchTerm || selectedCategory !== 'all'
+                  ? 'Try adjusting your search terms or filters'
+                  : 'Be the first to share your story with the community'}
+              </p>
+              {isAuthenticated && !searchTerm && selectedCategory === 'all' && (
+                <Button
+                  className="mt-4"
+                  onClick={() => navigate(isAdmin ? '/admin/write-blog' : '/student/write-blog')}
+                >
+                  <PenTool className="h-5 w-5 mr-2" />
+                  Write the First Blog
+                </Button>
+              )}
             </div>
-          </div>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {sortedBlogs.map((blog) => (
+              <Card key={blog.id} className="group hover:shadow-lg transition-shadow duration-200 cursor-pointer" onClick={() => navigate(`/blog/${blog.id}`)}>
+                {/* Blog Image */}
+                {blog.coverImage && (
+                  <div className="aspect-video overflow-hidden rounded-t-lg">
+                    <img
+                      src={blog.coverImage}
+                      alt={blog.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                    />
+                  </div>
+                )}
 
-          {/* Sidebar */}
-          <div className="space-y-8">
-            {/* Write a Blog CTA */}
-            {!isAuthenticated && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Share Your Story</CardTitle>
-                  <CardDescription>
-                    Join our community of writers and share your experiences with fellow students.
-                  </CardDescription>
-                </CardHeader>
-                <div className="p-6 pt-0">
-                  <Button
-                    fullWidth
-                    onClick={() => navigate('/auth/login')}
-                    icon={<PenTool className="w-4 h-4" />}
-                  >
-                    Start Writing
-                  </Button>
-                </div>
-              </Card>
-            )}
+                <div className="p-6">
+                  {/* Category and Featured Badge */}
+                  <div className="flex items-center justify-between mb-3">
+                    <Badge variant="outline">{blog.category}</Badge>
+                    {blog.featured && (
+                      <Badge variant="primary">Featured</Badge>
+                    )}
+                  </div>
 
-            {/* Popular Tags */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Popular Tags</CardTitle>
-              </CardHeader>
-              <div className="p-6 pt-0">
-                <div className="flex flex-wrap gap-2">
-                  {['technology', 'leadership', 'events', 'community', 'learning', 'innovation', 'networking', 'sustainability'].map(tag => (
-                    <button
-                      key={tag}
-                      onClick={() => setSearchTerm(tag)}
-                      className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                    >
-                      #{tag}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </Card>
+                  {/* Title */}
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-[var(--primary-accent-1)] transition-colors line-clamp-2">
+                    {blog.title}
+                  </h3>
 
-            {/* Top Contributors */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Top Contributors</CardTitle>
-              </CardHeader>
-              <div className="p-6 pt-0 space-y-4">
-                {mockBlogs.slice(0, 3).map(blog => (
-                  <div key={blog.author.name} className="flex items-center">
-                    <Avatar src={blog.author.avatar} alt={blog.author.name} size="sm" />
-                    <div className="ml-3 flex-1">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">
-                        {blog.author.name}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {blog.author.club}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium" style={{ color: 'var(--primary-accent-1)' }}>
-                        {blog.likes}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">likes</p>
+                  {/* Excerpt */}
+                  <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                    {blog.excerpt}
+                  </p>
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {blog.tags.slice(0, 3).map((tag, index) => (
+                      <span
+                        key={index}
+                        className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                    {blog.tags.length > 3 && (
+                      <span className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full">
+                        +{blog.tags.length - 3} more
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Author Info */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Avatar src={blog.author.avatar} alt={blog.author.name} size="sm" className="mr-3" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {blog.author.name}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {blog.author.club}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            </Card>
+
+                  {/* Meta Info */}
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                      <Calendar className="h-4 w-4 mr-1" />
+                      {formatDate(blog.publishedAt)}
+                    </div>
+                    <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                      <Clock className="h-4 w-4 mr-1" />
+                      {blog.readTime} min read
+                    </div>
+                  </div>
+
+                  {/* Engagement */}
+                  <div className="flex items-center justify-between mt-3">
+                    <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center">
+                        <Eye className="h-4 w-4 mr-1" />
+                        {blog.views}
+                      </div>
+                      <div className="flex items-center">
+                        <Heart className="h-4 w-4 mr-1" />
+                        {blog.likes}
+                      </div>
+                      <div className="flex items-center">
+                        <MessageCircle className="h-4 w-4 mr-1" />
+                        {blog.comments}
+                      </div>
+                    </div>
+                    <Button variant="ghost" size="sm">
+                      <Share className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            ))}
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
