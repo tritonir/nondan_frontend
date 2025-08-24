@@ -5,6 +5,7 @@ import { Calendar, Clock, MapPin, Users, ExternalLink } from 'lucide-react';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
 import Card from './ui/Card';
+import { toast } from 'react-toastify';
 
 const EventCard = ({ event, showClubInfo = true, className = '' }) => {
   const clubTheme = useClubTheme();
@@ -55,6 +56,26 @@ const EventCard = ({ event, showClubInfo = true, className = '' }) => {
   const isUpcoming = event.status === 'upcoming';
   const isPastEvent = event.status === 'completed';
 
+  const handleRegister = async (event_id) => {
+    try {
+      const res = await fetch("http://localhost:5000/api/event/regev", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem('nondan-token')}`
+        },
+        body: JSON.stringify({ event_id }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        return toast.error(`Already in`);
+      }
+      toast.success(`Successfully Register`);
+    } catch {
+      toast.error(`Not added`);
+    }
+  };
+
   return (
     <Card
       hover
@@ -63,9 +84,9 @@ const EventCard = ({ event, showClubInfo = true, className = '' }) => {
     >
       {/* Event Image */}
       <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
-        {event.image ? (
+        {event.image_url ? (
           <img
-            src={event.image}
+            src={event.image_url}
             alt={event.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             loading="lazy"
@@ -145,7 +166,7 @@ const EventCard = ({ event, showClubInfo = true, className = '' }) => {
             </div>
           )}
 
-          {event.attendees && (
+          {/* {event.attendees && (
             <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
               <Users className="w-4 h-4 mr-2 flex-shrink-0" />
               <span>
@@ -153,7 +174,7 @@ const EventCard = ({ event, showClubInfo = true, className = '' }) => {
                 {event.attendees.max && ` / ${event.attendees.max}`} attendees
               </span>
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Tags */}
@@ -196,6 +217,7 @@ const EventCard = ({ event, showClubInfo = true, className = '' }) => {
                 borderColor: clubTheme?.primary || 'var(--primary-accent-1)'
               }}
               disabled={event.isRegistered}
+              onClick={() => handleRegister(event._id)}
             >
               {event.isRegistered ? 'Registered' : 'Register'}
             </Button>

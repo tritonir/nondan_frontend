@@ -128,7 +128,7 @@ const ClubCard = ({ club, className = "" }) => {
         <div className="flex items-center justify-between mb-4 text-sm text-gray-500 dark:text-gray-400">
           <div className="flex items-center">
             <Users className="w-4 h-4 mr-1" />
-            <span>{formatMemberCount(club.members)} members</span>
+            <span>{formatMemberCount(club.members.length)} members</span>
           </div>
 
           {club.events && (
@@ -154,7 +154,7 @@ const ClubCard = ({ club, className = "" }) => {
         <div className="grid grid-cols-3 gap-2 mb-4">
           <div className="text-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
             <div className="text-lg font-semibold text-gray-900 dark:text-white">
-              {formatMemberCount(club.members)}
+              {formatMemberCount(club.members.length)}
             </div>
             <div className="text-xs text-gray-500 dark:text-gray-400">
               Members

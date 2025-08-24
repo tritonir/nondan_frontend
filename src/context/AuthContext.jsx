@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 
 const AuthContext = createContext();
 
+
 const API_BASE_URL = 'https://nondan-backend.vercel.app/api/user';
 
 export const useAuth = () => {
@@ -109,7 +110,7 @@ export const AuthProvider = ({ children }) => {
           email: userData.email,
           password: userData.password,
           confirpassword: userData.confirmPassword, // ⚠ must match backend spelling
-          avatar: userData.avatar|| "",
+          avatar: userData.avatar || "",
           role: userData.role || "student",
         }),
       });
