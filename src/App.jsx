@@ -56,7 +56,7 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/auth/login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   if (requiredRole && user?.role !== requiredRole) {
@@ -110,7 +110,7 @@ const App = () => {
                     }
                 />
                 <Route
-                    path="/auth/login"
+                    path="/login"
                     element={
                       <PublicRoute>
                         <AuthPage type="login" />
@@ -118,7 +118,7 @@ const App = () => {
                     }
                 />
                 <Route
-                    path="/auth/signup"
+                    path="/signup"
                     element={
                       <PublicRoute>
                         <AuthPage type="signup" />
