@@ -61,11 +61,9 @@ const AuthPage = ({ type = 'login' }) => {
         newErrors.confirmPassword = 'Passwords do not match';
       }
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
