@@ -292,7 +292,7 @@ const AuthPage = ({ type = "login" }) => {
 
             <div className="mt-6 text-center">
               <Link
-                to={isLogin ? "/auth/signup" : "/auth/login"}
+                to={isLogin ? "/signup" : "/login"}
                 className="text-[var(--primary-accent-1)] hover:text-[var(--primary-accent-2)] font-medium"
               >
                 {isLogin ? "Create an account" : "Sign in instead"}
