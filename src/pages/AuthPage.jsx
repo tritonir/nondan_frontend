@@ -61,11 +61,9 @@ const AuthPage = ({ type = "login" }) => {
         newErrors.confirmPassword = "Passwords do not match";
       }
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -74,15 +72,22 @@ const AuthPage = ({ type = "login" }) => {
     setIsLoading(true);
 
     try {
-      if (isLogin) {
-        // Use AuthContext login function
-        const result = await login({
-          email: formData.email,
-          password: formData.password,
-          role: "student", // Default to student, or get from API response
-        });
-        data = await res.json();
+      let res;
+      let data;
 
+      if (isLogin) {
+        res = await fetch("https://nondan-backend.vercel.app/api/user/signin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        });
+
+        data = await res.json();
         if (!data.error) {
           localStorage.setItem("token", data.token);
           localStorage.setItem("userid", data.user.id);
@@ -90,26 +95,33 @@ const AuthPage = ({ type = "login" }) => {
           // return navigate(formData.role === "admin" ? "/admin/dashboard" : "/student/dashboard");
         }
       } else {
-        // Use AuthContext signup function
-        const result = await signup({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          confirmPassword: formData.confirmPassword,
-          role: formData.role,
+        res = await fetch("https://nondan-backend.vercel.app/api/user/singup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fullname: formData.name,
+            email: formData.email,
+            password: formData.password,
+            confirpassword: formData.confirmPassword,
+            avatar: formData.avatar || "",
+            role: formData.role,
+          }),
         });
 
-        if (result.success) {
-          navigate(
-            result.user.role === "admin"
-              ? "/admin/dashboard"
-              : "/student/dashboard"
-          );
-        } else {
-          setErrors({ submit: result.error || "Signup failed" });
-        }
+        data = await res.json();
       }
-    } catch (error) {
+
+      if (!data.error) {
+        console.log("LKFLSDFSLFJLKSJD");
+        navigate(
+          formData.role === "admin" ? "/admin/dashboard" : "/student/dashboard"
+        );
+      } else {
+        setErrors({ submit: data.error || "Authentication failed" });
+      }
+    } catch {
       setErrors({ submit: "An unexpected error occurred" });
     } finally {
       setIsLoading(false);

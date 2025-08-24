@@ -97,23 +97,24 @@ const StudentDashboard = () => {
           </button>
         </div>
 
-        <div className="p-6">
+        {/* Main content - properly centered */}
+        <div className="max-w-7xl mx-auto p-6">
           {/* Welcome Header */}
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               Welcome back, {user?.name}! 👋
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
-              Here's what's happening with your events and activities
+            <p className="text-gray-600 dark:text-gray-400 mt-2">
+              Here's what's happening with your events and activities.
             </p>
           </div>
 
-          {/* Stats Cards */}
+          {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {stats.map((stat, index) => (
-              <Card key={index} className="hover:shadow-md transition-shadow">
+              <Card key={index} className="p-6">
                 <div className="flex items-center">
-                  <div className={`${stat.color} p-3 rounded-lg text-white mr-4`}>
+                  <div className={`p-3 rounded-lg ${stat.color} text-white mr-4`}>
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={stat.icon} />
                     </svg>
@@ -127,80 +128,61 @@ const StudentDashboard = () => {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Main Content */}
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - Upcoming Events */}
             <div className="lg:col-span-2 space-y-6">
               {/* Upcoming Events */}
               <Card>
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    Upcoming Events
-                  </h2>
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">Upcoming Events</h2>
                   <Link to="/student/events">
-                    <Button variant="ghost" size="sm">View All</Button>
+                    <Button variant="outline" size="sm">View All</Button>
                   </Link>
                 </div>
-
-                {upcomingEvents.length > 0 ? (
-                  <div className="space-y-4">
-                    {upcomingEvents.map(event => (
-                      <div key={event.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                        <div className="flex items-start space-x-4">
-                          <img
-                            src={event.image}
-                            alt={event.title}
-                            className="w-16 h-16 rounded-lg object-cover"
-                          />
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-medium text-gray-900 dark:text-white mb-1">
-                              {event.title}
-                            </h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                              {new Date(event.date).toLocaleDateString()} • {event.location}
-                            </p>
-                            <div className="flex items-center space-x-2">
-                              <Badge variant="success" size="sm">Registered</Badge>
-                              <span className="text-xs text-gray-500">
-                                {event.attendees.current}/{event.attendees.max} attendees
-                              </span>
-                            </div>
+                <div className="space-y-4">
+                  {upcomingEvents.map((event) => (
+                    <div key={event.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                      <div className="flex items-center space-x-4">
+                        <img
+                          src={event.image}
+                          alt={event.title}
+                          className="w-16 h-16 rounded-lg object-cover"
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900 dark:text-white">{event.title}</h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            {new Date(event.date).toLocaleDateString()} • {event.location}
+                          </p>
+                          <div className="flex items-center space-x-2 mt-2">
+                            <Badge variant="primary">{event.category}</Badge>
+                            <Badge variant="success">Registered</Badge>
                           </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500 dark:text-gray-400">No upcoming events</p>
-                    <Link to="/explore">
-                      <Button className="mt-2">Explore Events</Button>
-                    </Link>
-                  </div>
-                )}
+                    </div>
+                  ))}
+                </div>
               </Card>
 
               {/* Recommendations */}
               <Card>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  Recommended for You
-                </h2>
-                <div className="grid gap-4">
-                  {recommendations.map(event => (
-                    <EventCard key={event.id} event={event} showClubInfo={false} />
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Recommended for You</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {recommendations.map((event) => (
+                    <EventCard key={event.id} event={event} />
                   ))}
                 </div>
               </Card>
             </div>
 
-            {/* Sidebar Content */}
+            {/* Right Column - Activity & Quick Actions */}
             <div className="space-y-6">
               {/* Quick Actions */}
               <Card>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  Quick Actions
-                </h3>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Quick Actions</h2>
                 <div className="space-y-3">
-                  <Link to="/explore" className="block">
+                  <Link to="/events" className="block">
                     <Button variant="outline" className="w-full justify-start">
                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -213,7 +195,7 @@ const StudentDashboard = () => {
                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
-                      Find Clubs
+                      Join Clubs
                     </Button>
                   </Link>
                   <Link to="/student/certificates" className="block">
@@ -229,23 +211,26 @@ const StudentDashboard = () => {
 
               {/* Recent Activity */}
               <Card>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  Recent Activity
-                </h3>
-                <div className="space-y-3">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Recent Activity</h2>
+                <div className="space-y-4">
                   {recentActivity.map((activity, index) => (
                     <div key={index} className="flex items-start space-x-3">
-                      <div className="w-8 h-8 bg-[var(--primary-accent-1)] rounded-full flex items-center justify-center flex-shrink-0">
-                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={getActivityIcon(activity.type)} />
-                        </svg>
+                      <div className="flex-shrink-0">
+                        <div className="w-8 h-8 bg-[var(--primary-accent-1)] bg-opacity-10 rounded-full flex items-center justify-center">
+                          <svg className="w-4 h-4 text-[var(--primary-accent-1)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={getActivityIcon(activity.type)} />
+                          </svg>
+                        </div>
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-gray-900 dark:text-white">
-                          {activity.type === 'registered' && `Registered for ${activity.event}`}
-                          {activity.type === 'joined' && `Joined ${activity.club}`}
-                          {activity.type === 'completed' && `Completed ${activity.event}`}
-                          {activity.type === 'certificate' && `Earned certificate from ${activity.event}`}
+                          <span className="font-medium">
+                            {activity.type === 'registered' && 'Registered for '}
+                            {activity.type === 'joined' && 'Joined '}
+                            {activity.type === 'completed' && 'Completed '}
+                            {activity.type === 'certificate' && 'Received certificate for '}
+                          </span>
+                          {activity.event || activity.club}
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400">{activity.time}</p>
                       </div>
