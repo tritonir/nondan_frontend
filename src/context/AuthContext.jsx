@@ -3,6 +3,8 @@ import { toast } from 'react-toastify';
 
 const AuthContext = createContext();
 
+const API_BASE_URL = 'http://localhost:5001/api/user';
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -42,54 +44,51 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     setLoading(true);
     try {
-      // Mock login - replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+      const response = await fetch(`${API_BASE_URL}/signin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password,
+        }),
+      });
 
-      // Mock validation
-      if (!credentials.email || !credentials.password) {
-        throw new Error('Email and password are required');
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
       }
 
-      // Check if user exists in localStorage (simulating a user database)
-      const existingUsers = JSON.parse(localStorage.getItem('nondan-users') || '{}');
-      const existingUser = existingUsers[credentials.email];
-
-      let userRole = 'student'; // default role
-      let userName = credentials.email.split('@')[0];
-
-      // If user exists, use their stored role and name
-      if (existingUser) {
-        userRole = existingUser.role;
-        userName = existingUser.name;
-      }
-
-      const mockUser = {
-        id: existingUser?.id || Date.now().toString(),
-        name: userName,
-        email: credentials.email,
-        role: userRole,
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=CF0F47&color=fff`,
-        clubId: userRole === 'admin' ? 'club-1' : null,
-        joinedAt: existingUser?.joinedAt || new Date().toISOString(),
-        preferences: existingUser?.preferences || {
+      const userData = {
+        id: data.user._id || data.user.id,
+        name: data.user.name,
+        email: data.user.email,
+        role: data.user.role || 'student',
+        avatar: data.user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.name)}&background=CF0F47&color=fff`,
+        clubId: data.user.clubId || null,
+        joinedAt: data.user.joinedAt || data.user.createdAt,
+        preferences: data.user.preferences || {
           notifications: true,
           theme: 'light',
           language: 'en'
         }
       };
 
-      const mockToken = `mock-jwt-${Date.now()}`;
+      const token = data.token;
       const tokenExpiry = new Date();
       tokenExpiry.setDate(tokenExpiry.getDate() + 7); // 7 days
 
-      setUser(mockUser);
-      localStorage.setItem('nondan-user', JSON.stringify(mockUser));
-      localStorage.setItem('nondan-token', mockToken);
+      setUser(userData);
+      localStorage.setItem('nondan-user', JSON.stringify(userData));
+      localStorage.setItem('nondan-token', token);
       localStorage.setItem('nondan-token-expiry', tokenExpiry.toISOString());
 
-      toast.success(`Welcome back, ${mockUser.name}!`);
-      return { success: true, user: mockUser };
+      toast.success(`Welcome back, ${userData.name}!`);
+      return { success: true, user: userData };
     } catch (error) {
+      console.error('Login error:', error);
       toast.error(error.message || 'Login failed');
       return { success: false, error: error.message };
     } finally {
@@ -100,50 +99,42 @@ export const AuthProvider = ({ children }) => {
   const signup = async (userData) => {
     setLoading(true);
     try {
-      // Mock signup - replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API delay
+      const response = await fetch(`${API_BASE_URL}/singup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fullname: userData.name,
+          email: userData.email,
+          password: userData.password,
+          confirpassword: userData.confirmPassword, // ⚠ must match backend spelling
+          avatar: userData.avatar|| "",
+          role: userData.role || "student",
+        }),
+      });
 
-      // Mock validation
-      if (!userData.email || !userData.password || !userData.name) {
-        throw new Error('All fields are required');
+      const data = await response.json();
+
+      if (data.error) {
+        throw new Error(data.message || 'Signup failed');
       }
 
-      if (userData.password !== userData.confirmPassword) {
-        throw new Error('Passwords do not match');
-      }
+      const userInfo = data.user
 
-      const mockUser = {
-        id: Date.now().toString(),
-        name: userData.name,
-        email: userData.email,
-        role: userData.role || 'student',
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=CF0F47&color=fff`,
-        clubId: userData.role === 'admin' ? 'club-1' : null,
-        joinedAt: new Date().toISOString(),
-        preferences: {
-          notifications: true,
-          theme: 'light',
-          language: 'en'
-        }
-      };
-
-      // Store user in simulated database for future logins
-      const existingUsers = JSON.parse(localStorage.getItem('nondan-users') || '{}');
-      existingUsers[userData.email] = mockUser;
-      localStorage.setItem('nondan-users', JSON.stringify(existingUsers));
-
-      const mockToken = `mock-jwt-${Date.now()}`;
+      const token = data.token;
       const tokenExpiry = new Date();
       tokenExpiry.setDate(tokenExpiry.getDate() + 7); // 7 days
 
-      setUser(mockUser);
-      localStorage.setItem('nondan-user', JSON.stringify(mockUser));
-      localStorage.setItem('nondan-token', mockToken);
-      localStorage.setItem('nondan-token-expiry', tokenExpiry.toISOString());
+      setUser(userInfo);
+      localStorage.setItem('nondan-user', JSON.stringify(userInfo));
+      localStorage.setItem('nondan-token', token);
+      //localStorage.setItem('nondan-token-expiry', tokenExpiry.toISOString());
 
-      toast.success(`Welcome to Nondan, ${mockUser.name}!`);
-      return { success: true, user: mockUser };
+      toast.success(`Welcome to Nondan, !`);
+      return { success: true, user: JSON.stringify(userInfo) };
     } catch (error) {
+      console.error('Signup error:', error);
       toast.error(error.message || 'Signup failed');
       return { success: false, error: error.message };
     } finally {
