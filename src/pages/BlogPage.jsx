@@ -107,7 +107,7 @@ const BlogPage = () => {
           {isAuthenticated && (
             <div className="mt-8">
               <Button
-                onClick={() => navigate(isAdmin ? '/admin/write-blog' : '/student/write-blog')}
+                onClick={() => navigate(isAdmin ? '/write-blog' : '/write-blog')}
                 className="mr-4"
               >
                 <PenTool className="h-5 w-5 mr-2" />
