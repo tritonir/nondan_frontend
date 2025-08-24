@@ -66,13 +66,13 @@ const Footer = () => {
               </div>
               <div className="flex items-center">
                 <Phone className="h-4 w-4 mr-2" />
-                <a href="tel:+1-555-0123" style={{ color: '#fff' }} className="hover:underline">
-                  +1 (555) 012-3456
+                <a href="tel:+8801620929190" style={{ color: '#fff' }} className="hover:underline">
+                  +880 1620-929190
                 </a>
               </div>
               <div className="flex items-center">
                 <MapPin className="h-4 w-4 mr-2" />
-                <span>San Francisco, CA</span>
+                <span>Dhaka, Bangladesh</span>
               </div>
             </div>
           </div>
@@ -197,7 +197,7 @@ const Footer = () => {
               <input
                 type="email"
                 placeholder="Enter your email"
-                style={{ background: 'var(--primary-bg)', color: '#fff', borderColor: 'var(--primary-accent-2)' }}
+                style={{ background: 'var(--primary-bg)', color: '#000', borderColor: 'var(--primary-accent-2)' }}
                 className="flex-1 px-4 py-2 rounded-l-lg focus:ring-2 focus:ring-[var(--primary-accent-2)] focus:border-transparent"
               />
               <button style={{ background: 'var(--primary-accent-2)', color: '#fff' }} className="px-6 py-2 rounded-r-lg hover:opacity-90 transition-colors">
