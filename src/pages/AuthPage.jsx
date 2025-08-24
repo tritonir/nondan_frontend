@@ -81,12 +81,14 @@ const AuthPage = ({ type = "login" }) => {
           password: formData.password,
           role: 'student' // Default to student, or get from API response
         });
+        data = await res.json();
 
-        if (result.success) {
-          // Navigation will be handled by AuthContext or App.jsx
-          navigate(result.user.role === "admin" ? "/admin/dashboard" : "/student/dashboard");
-        } else {
-          setErrors({ submit: result.error || "Login failed" });
+        if (!data.error) {
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("userid", data.user.id);
+          return navigate(formData.role === "admin" ? "/admin/dashboard" : "/");
+          // return navigate(formData.role === "admin" ? "/admin/dashboard" : "/student/dashboard");
+
         }
       } else {
         // Use AuthContext signup function
