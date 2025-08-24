@@ -79,7 +79,7 @@ const AuthPage = ({ type = "login" }) => {
         const result = await login({
           email: formData.email,
           password: formData.password,
-          role: 'student' // Default to student, or get from API response
+          role: "student", // Default to student, or get from API response
         });
         data = await res.json();
 
@@ -88,7 +88,6 @@ const AuthPage = ({ type = "login" }) => {
           localStorage.setItem("userid", data.user.id);
           return navigate(formData.role === "admin" ? "/admin/dashboard" : "/");
           // return navigate(formData.role === "admin" ? "/admin/dashboard" : "/student/dashboard");
-
         }
       } else {
         // Use AuthContext signup function
@@ -97,17 +96,21 @@ const AuthPage = ({ type = "login" }) => {
           email: formData.email,
           password: formData.password,
           confirmPassword: formData.confirmPassword,
-          role: formData.role
+          role: formData.role,
         });
 
         if (result.success) {
-          navigate(result.user.role === "admin" ? "/admin/dashboard" : "/student/dashboard");
+          navigate(
+            result.user.role === "admin"
+              ? "/admin/dashboard"
+              : "/student/dashboard"
+          );
         } else {
           setErrors({ submit: result.error || "Signup failed" });
         }
       }
     } catch (error) {
-      setErrors({ submit: 'An unexpected error occurred' });
+      setErrors({ submit: "An unexpected error occurred" });
     } finally {
       setIsLoading(false);
     }
