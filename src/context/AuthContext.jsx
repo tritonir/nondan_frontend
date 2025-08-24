@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 
 const AuthContext = createContext();
 
-const API_BASE_URL = 'http://localhost:5001/api/user';
+const API_BASE_URL = 'https://nondan-backend.vercel.app/api/user';
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
