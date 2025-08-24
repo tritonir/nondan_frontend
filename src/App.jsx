@@ -35,6 +35,7 @@ const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
 const AdminProfile = lazy(() => import('./pages/admin/Profile'));
 const AdminEvents = lazy(() => import('./pages/admin/Events'));
 const CreateEvent = lazy(() => import('./pages/admin/CreateEvent'));
+const CreateClub = lazy(() => import('./pages/admin/CreateClub'));
 const EditEvent = lazy(() => import('./pages/admin/EditEvent'));
 const AttendeeManagement = lazy(() => import('./pages/admin/AttendeeManagement'));
 const ClubManagement = lazy(() => import('./pages/admin/ClubManagement'));
@@ -183,6 +184,16 @@ const App = () => {
                 <Route path="/admin/events/create" element={
                   <ProtectedRoute requiredRole="admin">
                     <CreateEvent />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/create-club" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <CreateClub />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/club-management" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <ClubManagement />
                   </ProtectedRoute>
                 } />
                 <Route path="/admin/events/:id/edit" element={
