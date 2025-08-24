@@ -4,12 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/layout/Sidebar';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 const CreateEvent = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -33,19 +37,76 @@ const CreateEvent = () => {
     { value: 'social', label: 'Social' }
   ];
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Mock event creation - would integrate with actual API
-    console.log('Creating event:', formData);
-    navigate('/admin/events');
-  };
-
   const nextStep = () => {
     if (currentStep < 3) setCurrentStep(currentStep + 1);
   };
 
   const prevStep = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const token = localStorage.getItem('nondan-token');
+      if (!token) throw new Error('User not authenticated');
+
+      let imageUrl = '';
+      // Upload image to Cloudinary if selected
+      if (formData.image) {
+        const imageData = new FormData();
+        imageData.append("file", formData.image);
+        imageData.append("upload_preset", "insta_clone");
+        imageData.append("cloud_name", "clouding1");
+
+        const cloudRes = await fetch("https://api.cloudinary.com/v1_1/clouding1/image/upload", {
+          method: "POST",
+          body: imageData
+        });
+
+        const cloudData = await cloudRes.json();
+        if (!cloudRes.ok) throw new Error('Failed to upload image');
+        imageUrl = cloudData.url;
+      }
+
+      // Prepare body for your API
+      const body = {
+        title: formData.title,
+        description: formData.description,
+        date: formData.date,
+        endDate: formData.endDate,
+        location: formData.location,
+        category: formData.category,
+        maxAttendees: formData.maxAttendees,
+        price: formData.price === 'custom' ? formData.customPrice : formData.price,
+        image_url: imageUrl,
+        requirements: formData.requirements,
+        certificate: formData.certificate,
+        club_id: '68ab24cbf7d921918a7f62df'
+      };
+      console.log(body)
+
+      const response = await fetch('http://localhost:5000/api/event/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('nondan-token')}`
+        },
+        body: JSON.stringify(body)
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to create event');
+
+      navigate('/admin/events');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -68,21 +129,22 @@ const CreateEvent = () => {
               <p className="text-gray-600 dark:text-gray-400">Fill in the details to create your event</p>
             </div>
 
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <p className="text-red-600 dark:text-red-400">{error}</p>
+              </div>
+            )}
+
             {/* Progress Steps */}
             <div className="flex items-center justify-center mb-8">
               {[1, 2, 3].map((step) => (
                 <div key={step} className="flex items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                    currentStep >= step 
-                      ? 'bg-[var(--primary-accent-1)] text-white' 
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
-                  }`}>
-                    {step}
-                  </div>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${currentStep >= step
+                    ? 'bg-[var(--primary-accent-1)] text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                    }`}>{step}</div>
                   {step < 3 && (
-                    <div className={`w-16 h-1 mx-2 ${
-                      currentStep > step ? 'bg-[var(--primary-accent-1)]' : 'bg-gray-200 dark:bg-gray-700'
-                    }`} />
+                    <div className={`w-16 h-1 mx-2 ${currentStep > step ? 'bg-[var(--primary-accent-1)]' : 'bg-gray-200 dark:bg-gray-700'}`} />
                   )}
                 </div>
               ))}
@@ -102,7 +164,7 @@ const CreateEvent = () => {
                         type="text"
                         required
                         value={formData.title}
-                        onChange={(e) => setFormData({...formData, title: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         placeholder="Enter event title"
                       />
@@ -116,7 +178,7 @@ const CreateEvent = () => {
                         required
                         rows={4}
                         value={formData.description}
-                        onChange={(e) => setFormData({...formData, description: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         placeholder="Describe your event"
                       />
@@ -130,7 +192,7 @@ const CreateEvent = () => {
                         <select
                           required
                           value={formData.category}
-                          onChange={(e) => setFormData({...formData, category: e.target.value})}
+                          onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         >
                           {categories.map(cat => (
@@ -148,7 +210,7 @@ const CreateEvent = () => {
                           required
                           min="1"
                           value={formData.maxAttendees}
-                          onChange={(e) => setFormData({...formData, maxAttendees: e.target.value})}
+                          onChange={(e) => setFormData({ ...formData, maxAttendees: e.target.value })}
                           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                           placeholder="100"
                         />
@@ -172,7 +234,7 @@ const CreateEvent = () => {
                           type="datetime-local"
                           required
                           value={formData.date}
-                          onChange={(e) => setFormData({...formData, date: e.target.value})}
+                          onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         />
                       </div>
@@ -184,7 +246,7 @@ const CreateEvent = () => {
                         <input
                           type="datetime-local"
                           value={formData.endDate}
-                          onChange={(e) => setFormData({...formData, endDate: e.target.value})}
+                          onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         />
                       </div>
@@ -198,7 +260,7 @@ const CreateEvent = () => {
                         type="text"
                         required
                         value={formData.location}
-                        onChange={(e) => setFormData({...formData, location: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         placeholder="Engineering Auditorium, Room 301"
                       />
@@ -211,7 +273,7 @@ const CreateEvent = () => {
                       <input
                         type="file"
                         accept="image/*"
-                        onChange={(e) => setFormData({...formData, image: e.target.files[0]})}
+                        onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                       />
                     </div>
@@ -231,7 +293,7 @@ const CreateEvent = () => {
                       <textarea
                         rows={3}
                         value={formData.requirements}
-                        onChange={(e) => setFormData({...formData, requirements: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         placeholder="What should attendees bring or know?"
                       />
@@ -242,7 +304,7 @@ const CreateEvent = () => {
                         type="checkbox"
                         id="certificate"
                         checked={formData.certificate}
-                        onChange={(e) => setFormData({...formData, certificate: e.target.checked})}
+                        onChange={(e) => setFormData({ ...formData, certificate: e.target.checked })}
                         className="w-4 h-4 text-[var(--primary-accent-1)] border-gray-300 rounded focus:ring-[var(--primary-accent-1)]"
                       />
                       <label htmlFor="certificate" className="ml-2 text-sm text-gray-700 dark:text-gray-300">
@@ -259,23 +321,23 @@ const CreateEvent = () => {
                   type="button"
                   variant="outline"
                   onClick={prevStep}
-                  disabled={currentStep === 1}
+                  disabled={currentStep === 1 || loading}
                 >
                   Previous
                 </Button>
 
                 <div className="flex space-x-3">
                   {currentStep < 3 ? (
-                    <Button type="button" onClick={nextStep}>
+                    <Button type="button" onClick={nextStep} disabled={loading}>
                       Next
                     </Button>
                   ) : (
                     <>
-                      <Button type="button" variant="outline">
+                      <Button type="button" variant="outline" disabled={loading}>
                         Save as Draft
                       </Button>
-                      <Button type="submit">
-                        Create Event
+                      <Button type="submit" disabled={loading}>
+                        {loading ? <LoadingSpinner size="sm" /> : 'Create Event'}
                       </Button>
                     </>
                   )}

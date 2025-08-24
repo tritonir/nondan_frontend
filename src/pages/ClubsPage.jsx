@@ -1,125 +1,78 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SearchBar from '../components/ui/SearchBar';
 import ClubCard from '../components/ClubCard';
 import Button from '../components/ui/Button';
 
 const ClubsPage = () => {
+  const [clubs, setClubs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('popular');
 
-  // Mock data - replace with actual API calls
-  const clubs = [
-    {
-      id: 'tech-club',
-      name: 'Technology Club',
-      description: 'Exploring the latest in technology, programming, and innovation. Join us for workshops, hackathons, and tech talks.',
-      category: 'Technology',
-      memberCount: 1250,
-      eventCount: 24,
-      colors: { primary: '#3B82F6', secondary: '#1D4ED8' },
-      banner: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400',
-      recentEvents: [
-        { title: 'React Workshop' },
-        { title: 'AI Symposium' }
-      ]
-    },
-    {
-      id: 'sports-club',
-      name: 'Sports Club',
-      description: 'Promoting fitness, teamwork, and sportsmanship through various athletic activities and competitions.',
-      category: 'Sports',
-      memberCount: 800,
-      eventCount: 18,
-      colors: { primary: '#10B981', secondary: '#059669' },
-      banner: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400',
-      recentEvents: [
-        { title: 'Basketball Tournament' },
-        { title: 'Marathon Training' }
-      ]
-    },
-    {
-      id: 'art-society',
-      name: 'Art Society',
-      description: 'A creative community for artists, designers, and art enthusiasts to share, learn, and grow together.',
-      category: 'Arts',
-      memberCount: 450,
-      eventCount: 12,
-      colors: { primary: '#F59E0B', secondary: '#D97706' },
-      banner: 'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=400',
-      recentEvents: [
-        { title: 'Photography Workshop' },
-        { title: 'Digital Art Contest' }
-      ]
-    },
-    {
-      id: 'business-club',
-      name: 'Business Club',
-      description: 'Developing entrepreneurial skills and business acumen through networking, workshops, and real-world projects.',
-      category: 'Academic',
-      memberCount: 680,
-      eventCount: 16,
-      colors: { primary: '#8B5CF6', secondary: '#7C3AED' },
-      banner: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
-      recentEvents: [
-        { title: 'Startup Pitch Night' },
-        { title: 'Finance Workshop' }
-      ]
-    },
-    {
-      id: 'music-society',
-      name: 'Music Society',
-      description: 'Bringing together music lovers, performers, and creators to share their passion for music.',
-      category: 'Arts',
-      memberCount: 320,
-      eventCount: 20,
-      colors: { primary: '#EF4444', secondary: '#DC2626' },
-      banner: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400',
-      recentEvents: [
-        { title: 'Battle of Bands' },
-        { title: 'Music Production Workshop' }
-      ]
-    },
-    {
-      id: 'volunteer-club',
-      name: 'Volunteer Club',
-      description: 'Making a positive impact in the community through service projects and volunteer opportunities.',
-      category: 'Social',
-      memberCount: 520,
-      eventCount: 14,
-      colors: { primary: '#06B6D4', secondary: '#0891B2' },
-      banner: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400',
-      recentEvents: [
-        { title: 'Community Service Day' },
-        { title: 'Food Drive Campaign' }
-      ]
-    }
-  ];
-
   const categories = ['all', 'technology', 'sports', 'arts', 'academic', 'social'];
 
+  // Fetch clubs from backend API
+  useEffect(() => {
+    const fetchClubs = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch('http://localhost:5000/api/club/');
+        if (!res.ok) {
+          throw new Error('Failed to fetch clubs');
+        }
+        const data = await res.json();
+        setClubs(data); // assuming API returns an array of clubs
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClubs();
+  }, []);
+
   const filteredClubs = clubs.filter(club => {
-    const matchesSearch = club.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         club.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' ||
-                           club.category.toLowerCase() === selectedCategory;
+    const matchesSearch =
+      club.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      club.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesCategory =
+      selectedCategory === 'all' ||
+      club.category.toLowerCase() === selectedCategory;
+
     return matchesSearch && matchesCategory;
   });
 
   const sortedClubs = [...filteredClubs].sort((a, b) => {
     switch (sortBy) {
       case 'popular':
-        return b.memberCount - a.memberCount;
+        return (b.memberCount || 0) - (a.memberCount || 0);
       case 'active':
-        return b.eventCount - a.eventCount;
+        return (b.eventCount || 0) - (a.eventCount || 0);
       case 'name':
         return a.name.localeCompare(b.name);
       case 'newest':
-        return 0; // Would sort by creation date in real app
+        return 0; // update when API provides createdAt
       default:
         return 0;
     }
   });
+
+  if (loading) {
+    return <div className="p-6 text-center">Loading clubs...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 text-center text-red-500">
+        Failed to load clubs: {error}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -173,30 +126,6 @@ const ClubsPage = () => {
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 text-center">
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">{clubs.length}</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Total Clubs</div>
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 text-center">
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              {clubs.reduce((sum, club) => sum + club.memberCount, 0).toLocaleString()}
-            </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Total Members</div>
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 text-center">
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              {clubs.reduce((sum, club) => sum + club.eventCount, 0)}
-            </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Active Events</div>
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 text-center">
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">{categories.length - 1}</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Categories</div>
-          </div>
-        </div>
-
         {/* Results */}
         <div className="mb-4">
           <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -215,17 +144,9 @@ const ClubsPage = () => {
           </div>
         ) : (
           <div className="text-center py-12">
-            <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-            </div>
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
               No clubs found
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Try adjusting your search criteria or browse different categories.
-            </p>
             <Button
               variant="outline"
               onClick={() => {
@@ -237,19 +158,6 @@ const ClubsPage = () => {
             </Button>
           </div>
         )}
-
-        {/* Call to Action */}
-        <div className="mt-16 bg-gradient-to-r from-[var(--primary-accent-1)] to-[var(--primary-accent-2)] rounded-lg p-8 text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">
-            Want to Start Your Own Club?
-          </h2>
-          <p className="text-white/90 mb-6">
-            Have a passion you want to share? Create your own club and bring together students with similar interests.
-          </p>
-          <Button variant="outline" className="bg-white text-[var(--primary-accent-1)] border-white hover:bg-gray-100">
-            Contact Admin
-          </Button>
-        </div>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 
 const AuthContext = createContext();
 
-const API_BASE_URL = 'http://localhost:5001/api/user';
+const API_BASE_URL = 'http://localhost:5000/api/user';
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -109,7 +109,7 @@ export const AuthProvider = ({ children }) => {
           email: userData.email,
           password: userData.password,
           confirpassword: userData.confirmPassword, // ⚠ must match backend spelling
-          avatar: userData.avatar|| "",
+          avatar: userData.avatar || "",
           role: userData.role || "student",
         }),
       });

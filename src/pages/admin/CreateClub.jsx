@@ -66,11 +66,11 @@ const CreateClub = () => {
     setError('');
 
     try {
-      const response = await fetch('/api/club', {
+      const response = await fetch('http://localhost:5000/api/club/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${localStorage.getItem('nondan-token')}`
         },
         body: JSON.stringify(clubData)
       });
