@@ -90,14 +90,13 @@ const AuthPage = ({ type = 'login' }) => {
         });
 
         data = await res.json();
-
         if (!data.error) {
           localStorage.setItem("token", data.token);
           localStorage.setItem("userid", data.user.id);
           return navigate(formData.role === "admin" ? "/admin/dashboard" : "/");
           // return navigate(formData.role === "admin" ? "/admin/dashboard" : "/student/dashboard");
 
-          
+
         }
       } else {
         res = await fetch("http://localhost:5000/api/user/singup", {
@@ -125,7 +124,7 @@ const AuthPage = ({ type = 'login' }) => {
       } else {
         setErrors({ submit: data.error || "Authentication failed" });
       }
-      } catch {
+    } catch {
       setErrors({ submit: 'An unexpected error occurred' });
 
     } finally {
