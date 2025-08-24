@@ -96,6 +96,8 @@ const AuthPage = ({ type = 'login' }) => {
           localStorage.setItem("userid", data.user.id);
           return navigate(formData.role === "admin" ? "/admin/dashboard" : "/");
           // return navigate(formData.role === "admin" ? "/admin/dashboard" : "/student/dashboard");
+
+          
         }
       } else {
         res = await fetch("http://localhost:5000/api/user/singup", {
