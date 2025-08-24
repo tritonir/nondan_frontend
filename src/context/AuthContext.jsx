@@ -50,15 +50,28 @@ export const AuthProvider = ({ children }) => {
         throw new Error('Email and password are required');
       }
 
+      // Check if user exists in localStorage (simulating a user database)
+      const existingUsers = JSON.parse(localStorage.getItem('nondan-users') || '{}');
+      const existingUser = existingUsers[credentials.email];
+
+      let userRole = 'student'; // default role
+      let userName = credentials.email.split('@')[0];
+
+      // If user exists, use their stored role and name
+      if (existingUser) {
+        userRole = existingUser.role;
+        userName = existingUser.name;
+      }
+
       const mockUser = {
-        id: Date.now().toString(),
-        name: credentials.name || credentials.email.split('@')[0],
+        id: existingUser?.id || Date.now().toString(),
+        name: userName,
         email: credentials.email,
-        role: credentials.role || 'student',
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(credentials.name || credentials.email.split('@')[0])}&background=CF0F47&color=fff`,
-        clubId: credentials.role === 'admin' ? 'club-1' : null,
-        joinedAt: new Date().toISOString(),
-        preferences: {
+        role: userRole,
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=CF0F47&color=fff`,
+        clubId: userRole === 'admin' ? 'club-1' : null,
+        joinedAt: existingUser?.joinedAt || new Date().toISOString(),
+        preferences: existingUser?.preferences || {
           notifications: true,
           theme: 'light',
           language: 'en'
@@ -114,6 +127,11 @@ export const AuthProvider = ({ children }) => {
         }
       };
 
+      // Store user in simulated database for future logins
+      const existingUsers = JSON.parse(localStorage.getItem('nondan-users') || '{}');
+      existingUsers[userData.email] = mockUser;
+      localStorage.setItem('nondan-users', JSON.stringify(existingUsers));
+
       const mockToken = `mock-jwt-${Date.now()}`;
       const tokenExpiry = new Date();
       tokenExpiry.setDate(tokenExpiry.getDate() + 7); // 7 days
@@ -149,10 +167,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const isAuthenticated = !!user;
+  const isAdmin = user?.role === 'admin';
 
   const value = {
     user,
     isAuthenticated,
+    isAdmin,
     loading,
     login,
     signup,

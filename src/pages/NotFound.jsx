@@ -9,7 +9,7 @@ const NotFound = () => {
         {/* 404 Illustration */}
         <div className="mb-8">
           <h1 className="text-9xl font-bold text-gray-200 dark:text-gray-700 mb-4">404</h1>
-          <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
+          <div className="w-24 h-1 bg-[var(--primary-accent-1)] mx-auto rounded-full"></div>
         </div>
 
         {/* Error Message */}
@@ -26,14 +26,14 @@ const NotFound = () => {
         <div className="space-y-4">
           <Link
             to="/"
-            className="inline-flex items-center justify-center w-full px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            className="inline-flex items-center justify-center w-full px-6 py-3 bg-[var(--primary-accent-1)] text-white rounded-lg hover:bg-[var(--primary-accent-2)] transition-colors"
           >
             <Home className="h-5 w-5 mr-2" />
             Go to Homepage
           </Link>
 
           <Link
-            to="/explore"
+            to="/events"
             className="inline-flex items-center justify-center w-full px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
             <Search className="h-5 w-5 mr-2" />
@@ -49,11 +49,9 @@ const NotFound = () => {
           </button>
         </div>
 
-        {/* Help Text */}
-        <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-          <p className="text-blue-700 dark:text-blue-300 text-sm">
-            If you believe this is an error, please contact our support team or try refreshing the page.
-          </p>
+        {/* Additional help text */}
+        <div className="mt-8 text-sm text-gray-500 dark:text-gray-400">
+          <p>If you believe this is an error, please contact support.</p>
         </div>
       </div>
     </div>

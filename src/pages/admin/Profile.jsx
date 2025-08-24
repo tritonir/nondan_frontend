@@ -4,34 +4,39 @@ import Sidebar from '../../components/layout/Sidebar';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Avatar from '../../components/ui/Avatar';
-import { Camera, MapPin, Calendar, GraduationCap, Heart, Save } from 'lucide-react';
+import { Camera, MapPin, Calendar, Save, Building, Shield } from 'lucide-react';
 
-const StudentProfile = () => {
+const AdminProfile = () => {
   const { user, updateUser } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-    phone: '+1 (555) 123-4567',
-    bio: 'Software engineering student passionate about technology and innovation. Love building apps and solving complex problems.',
-    interests: ['Technology', 'Sports', 'Music', 'Photography'],
-    year: 'Sophomore',
-    major: 'Computer Science',
-    location: 'New York, NY',
-    website: 'https://johndoe.dev',
-    github: 'https://github.com/johndoe',
-    linkedin: 'https://linkedin.com/in/johndoe'
+    name: '',
+    email: '',
+    phone: '',
+    bio: '',
+    clubName: '',
+    position: 'Admin',
+    location: '',
+    website: '',
+    socialLinks: {
+      instagram: '',
+      facebook: '',
+      twitter: '',
+      linkedin: ''
+    }
   });
 
+  // Load user data from backend (real-time data)
   useEffect(() => {
     const loadUserProfile = async () => {
       try {
+        // TODO: Replace with actual API call
         const token = localStorage.getItem('nondan-token');
         if (token) {
-          // Try to fetch from backend API
-          const response = await fetch('/api/student/profile', {
+          // Mock API call - replace with actual backend call
+          const response = await fetch('/api/admin/profile', {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -43,34 +48,38 @@ const StudentProfile = () => {
               name: userData.name || user?.name || '',
               email: userData.email || user?.email || '',
               phone: userData.phone || '+1 (555) 123-4567',
-              bio: userData.bio || 'Software engineering student passionate about technology and innovation. Love building apps and solving complex problems.',
-              interests: userData.interests || ['Technology', 'Sports', 'Music', 'Photography'],
-              year: userData.year || 'Sophomore',
-              major: userData.major || 'Computer Science',
-              location: userData.location || 'New York, NY',
-              website: userData.website || 'https://johndoe.dev',
-              github: userData.github || 'https://github.com/johndoe',
-              linkedin: userData.linkedin || 'https://linkedin.com/in/johndoe'
+              bio: userData.bio || 'Event management administrator passionate about creating amazing experiences for students.',
+              clubName: userData.clubName || 'Tech Club',
+              position: userData.position || 'Admin',
+              location: userData.location || 'University Campus',
+              website: userData.website || 'https://techclub.university.edu',
+              socialLinks: userData.socialLinks || {
+                instagram: '@techclub_uni',
+                facebook: 'TechClubUniversity',
+                twitter: '@techclub_uni',
+                linkedin: 'university-tech-club'
+              }
             });
-          } else {
-            throw new Error('Failed to fetch profile');
           }
         }
       } catch (error) {
-        console.error('Failed to load profile from backend:', error);
+        console.error('Failed to load profile:', error);
         // Fallback to default values
         setFormData({
           name: user?.name || '',
           email: user?.email || '',
           phone: '+1 (555) 123-4567',
-          bio: 'Software engineering student passionate about technology and innovation. Love building apps and solving complex problems.',
-          interests: ['Technology', 'Sports', 'Music', 'Photography'],
-          year: 'Sophomore',
-          major: 'Computer Science',
-          location: 'New York, NY',
-          website: 'https://johndoe.dev',
-          github: 'https://github.com/johndoe',
-          linkedin: 'https://linkedin.com/in/johndoe'
+          bio: 'Event management administrator passionate about creating amazing experiences for students.',
+          clubName: 'Tech Club',
+          position: 'Admin',
+          location: 'University Campus',
+          website: 'https://techclub.university.edu',
+          socialLinks: {
+            instagram: '@techclub_uni',
+            facebook: 'TechClubUniversity',
+            twitter: '@techclub_uni',
+            linkedin: 'university-tech-club'
+          }
         });
       }
     };
@@ -80,34 +89,29 @@ const StudentProfile = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleInterestAdd = (interest) => {
-    if (!formData.interests.includes(interest)) {
+    if (name.startsWith('social_')) {
+      const socialKey = name.replace('social_', '');
       setFormData(prev => ({
         ...prev,
-        interests: [...prev.interests, interest]
+        socialLinks: {
+          ...prev.socialLinks,
+          [socialKey]: value
+        }
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
       }));
     }
-  };
-
-  const handleInterestRemove = (interest) => {
-    setFormData(prev => ({
-      ...prev,
-      interests: prev.interests.filter(i => i !== interest)
-    }));
   };
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // Try to save to backend API
+      // TODO: Replace with actual API call
       const token = localStorage.getItem('nondan-token');
-      const response = await fetch('/api/student/profile', {
+      const response = await fetch('/api/admin/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -127,7 +131,7 @@ const StudentProfile = () => {
       }
     } catch (error) {
       console.error('Error updating profile:', error);
-      // Simulate success for demo purposes
+      // Simulate success for demo
       if (updateUser) {
         updateUser(formData);
       }
@@ -137,11 +141,6 @@ const StudentProfile = () => {
       setIsSaving(false);
     }
   };
-
-  const availableInterests = [
-    'Technology', 'Sports', 'Music', 'Photography', 'Art', 'Travel',
-    'Reading', 'Gaming', 'Cooking', 'Dancing', 'Writing', 'Movies'
-  ];
 
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -160,7 +159,7 @@ const StudentProfile = () => {
         {/* Main content - properly centered */}
         <div className="max-w-6xl mx-auto p-6">
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Profile</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Profile</h1>
             <Button
               variant={isEditing ? 'primary' : 'outline'}
               onClick={isEditing ? handleSave : () => setIsEditing(true)}
@@ -195,9 +194,19 @@ const StudentProfile = () => {
                   {formData.name}
                 </h2>
 
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  {formData.major} • {formData.year}
-                </p>
+                <div className="flex items-center justify-center mb-2">
+                  <Shield className="h-4 w-4 mr-2 text-[var(--primary-accent-1)]" />
+                  <p className="text-[var(--primary-accent-1)] font-medium">
+                    {formData.position}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-center mb-4">
+                  <Building className="h-4 w-4 mr-2 text-gray-600 dark:text-gray-400" />
+                  <p className="text-gray-600 dark:text-gray-400">
+                    {formData.clubName}
+                  </p>
+                </div>
 
                 <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                   <div className="flex items-center justify-center">
@@ -206,48 +215,34 @@ const StudentProfile = () => {
                   </div>
                   <div className="flex items-center justify-center">
                     <Calendar className="h-4 w-4 mr-2" />
-                    Joined September 2023
+                    Admin since September 2023
                   </div>
                 </div>
 
-                {!isEditing && (
-                  <div className="mt-6 space-y-2">
-                    {formData.website && (
-                      <a href={formData.website} target="_blank" rel="noopener noreferrer"
-                         className="block text-[var(--primary-accent-1)] hover:underline">
-                        Portfolio Website
-                      </a>
-                    )}
-                    {formData.github && (
-                      <a href={formData.github} target="_blank" rel="noopener noreferrer"
-                         className="block text-[var(--primary-accent-1)] hover:underline">
-                        GitHub Profile
-                      </a>
-                    )}
-                    {formData.linkedin && (
-                      <a href={formData.linkedin} target="_blank" rel="noopener noreferrer"
-                         className="block text-[var(--primary-accent-1)] hover:underline">
-                        LinkedIn Profile
-                      </a>
-                    )}
+                {!isEditing && formData.website && (
+                  <div className="mt-6">
+                    <a href={formData.website} target="_blank" rel="noopener noreferrer"
+                       className="text-[var(--primary-accent-1)] hover:underline">
+                      Club Website
+                    </a>
                   </div>
                 )}
               </Card>
 
               {/* Quick Stats */}
               <Card className="mt-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Activity</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Admin Activity</h3>
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Events Attended</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">12</span>
+                    <span className="text-gray-600 dark:text-gray-400">Events Created</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">25</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Clubs Joined</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">5</span>
+                    <span className="text-gray-600 dark:text-gray-400">Total Attendees</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">1,247</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Certificates</span>
+                    <span className="text-gray-600 dark:text-gray-400">Active Events</span>
                     <span className="font-semibold text-gray-900 dark:text-white">8</span>
                   </div>
                 </div>
@@ -321,47 +316,66 @@ const StudentProfile = () => {
                 </div>
               </Card>
 
-              {/* Academic Information */}
+              {/* Organization Information */}
               <Card>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Academic Information</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Organization Information</h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Year
+                      Club/Organization
                     </label>
                     {isEditing ? (
-                      <select
-                        name="year"
-                        value={formData.year}
+                      <input
+                        type="text"
+                        name="clubName"
+                        value={formData.clubName}
                         onChange={handleInputChange}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-accent-1)] focus:border-transparent"
-                      >
-                        <option>Freshman</option>
-                        <option>Sophomore</option>
-                        <option>Junior</option>
-                        <option>Senior</option>
-                        <option>Graduate</option>
-                      </select>
+                      />
                     ) : (
-                      <p className="text-gray-900 dark:text-white py-2">{formData.year}</p>
+                      <p className="text-gray-900 dark:text-white py-2">{formData.clubName}</p>
                     )}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Major
+                      Position
+                    </label>
+                    {isEditing ? (
+                      <select
+                        name="position"
+                        value={formData.position}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-accent-1)] focus:border-transparent"
+                      >
+                        <option>Admin</option>
+                        <option>President</option>
+                        <option>Vice President</option>
+                        <option>Event Coordinator</option>
+                        <option>Secretary</option>
+                        <option>Treasurer</option>
+                      </select>
+                    ) : (
+                      <p className="text-gray-900 dark:text-white py-2">{formData.position}</p>
+                    )}
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Website
                     </label>
                     {isEditing ? (
                       <input
-                        type="text"
-                        name="major"
-                        value={formData.major}
+                        type="url"
+                        name="website"
+                        value={formData.website}
                         onChange={handleInputChange}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-accent-1)] focus:border-transparent"
+                        placeholder="https://your-club-website.com"
                       />
                     ) : (
-                      <p className="text-gray-900 dark:text-white py-2">{formData.major}</p>
+                      <p className="text-gray-900 dark:text-white py-2">{formData.website}</p>
                     )}
                   </div>
                 </div>
@@ -369,7 +383,7 @@ const StudentProfile = () => {
 
               {/* Bio */}
               <Card>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">About Me</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">About</h3>
                 {isEditing ? (
                   <textarea
                     name="bio"
@@ -377,111 +391,39 @@ const StudentProfile = () => {
                     onChange={handleInputChange}
                     rows={4}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-accent-1)] focus:border-transparent"
-                    placeholder="Tell others about yourself..."
+                    placeholder="Tell others about yourself and your role..."
                   />
                 ) : (
                   <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{formData.bio}</p>
                 )}
               </Card>
 
-              {/* Interests */}
+              {/* Social Links */}
               <Card>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Interests</h3>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {formData.interests.map((interest, index) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-[var(--primary-accent-1)] text-white"
-                    >
-                      <Heart className="h-3 w-3 mr-1" />
-                      {interest}
-                      {isEditing && (
-                        <button
-                          onClick={() => handleInterestRemove(interest)}
-                          className="ml-2 text-white hover:text-gray-200"
-                        >
-                          ×
-                        </button>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Social Links</h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {Object.entries(formData.socialLinks).map(([platform, handle]) => (
+                    <div key={platform}>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 capitalize">
+                        {platform}
+                      </label>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          name={`social_${platform}`}
+                          value={handle}
+                          onChange={handleInputChange}
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-accent-1)] focus:border-transparent"
+                          placeholder={`@${platform}_handle`}
+                        />
+                      ) : (
+                        <p className="text-gray-900 dark:text-white py-2">{handle || 'Not set'}</p>
                       )}
-                    </span>
+                    </div>
                   ))}
                 </div>
-
-                {isEditing && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Add Interest
-                    </label>
-                    <select
-                      onChange={(e) => {
-                        if (e.target.value) {
-                          handleInterestAdd(e.target.value);
-                          e.target.value = '';
-                        }
-                      }}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-accent-1)] focus:border-transparent"
-                    >
-                      <option value="">Select an interest...</option>
-                      {availableInterests
-                        .filter(interest => !formData.interests.includes(interest))
-                        .map(interest => (
-                          <option key={interest} value={interest}>{interest}</option>
-                        ))}
-                    </select>
-                  </div>
-                )}
               </Card>
-
-              {/* Social Links */}
-              {isEditing && (
-                <Card>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Social Links</h3>
-
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Website/Portfolio
-                      </label>
-                      <input
-                        type="url"
-                        name="website"
-                        value={formData.website}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-accent-1)] focus:border-transparent"
-                        placeholder="https://your-website.com"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        GitHub
-                      </label>
-                      <input
-                        type="url"
-                        name="github"
-                        value={formData.github}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-accent-1)] focus:border-transparent"
-                        placeholder="https://github.com/username"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        LinkedIn
-                      </label>
-                      <input
-                        type="url"
-                        name="linkedin"
-                        value={formData.linkedin}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-accent-1)] focus:border-transparent"
-                        placeholder="https://linkedin.com/in/username"
-                      />
-                    </div>
-                  </div>
-                </Card>
-              )}
             </div>
           </div>
         </div>
@@ -490,4 +432,4 @@ const StudentProfile = () => {
   );
 };
 
-export default StudentProfile;
+export default AdminProfile;
