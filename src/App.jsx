@@ -30,6 +30,7 @@ const StudentCertificates = lazy(() => import('./pages/student/Certificates'));
 
 // Admin pages
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
+const AdminProfile = lazy(() => import('./pages/admin/Profile'));
 const AdminEvents = lazy(() => import('./pages/admin/Events'));
 const CreateEvent = lazy(() => import('./pages/admin/CreateEvent'));
 const EditEvent = lazy(() => import('./pages/admin/EditEvent'));
@@ -37,6 +38,7 @@ const AttendeeManagement = lazy(() => import('./pages/admin/AttendeeManagement')
 const ClubManagement = lazy(() => import('./pages/admin/ClubManagement'));
 const Analytics = lazy(() => import('./pages/admin/Analytics'));
 const Scanner = lazy(() => import('./pages/admin/Scanner'));
+const CertificateCustomization = lazy(() => import('./pages/admin/CertificateCustomization'));
 
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredRole = null }) => {
@@ -171,6 +173,14 @@ const App = () => {
                   }
                 />
                 <Route
+                  path="/admin/profile"
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <AdminProfile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
                   path="/admin/events"
                   element={
                     <ProtectedRoute requiredRole="admin">
@@ -223,6 +233,14 @@ const App = () => {
                   element={
                     <ProtectedRoute requiredRole="admin">
                       <Scanner />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/certificate-customization"
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <CertificateCustomization />
                     </ProtectedRoute>
                   }
                 />
