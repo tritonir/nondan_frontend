@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/signin`, {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ export const AuthProvider = ({ children }) => {
   const signup = async (userData) => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/singup`, {
+      const response = await fetch(`${API_BASE_URL}/auth/singup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
