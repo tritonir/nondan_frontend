@@ -89,7 +89,7 @@ const CreateEvent = () => {
       };
       console.log(body)
 
-      const response = await fetch('http://localhost:5000/api/event/', {
+      const response = await fetch('http://nondan-backend.vercel.app/api/event/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

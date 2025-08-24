@@ -14,7 +14,7 @@ const StudentEvents = () => {
     const fetchUserEvents = async () => {
       try {
         const token = localStorage.getItem('nondan-token');
-        const res = await fetch('http://localhost:5000/api/event/showstev', {
+        const res = await fetch('http://nondan-backend.vercel.app/api/event/showstev', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

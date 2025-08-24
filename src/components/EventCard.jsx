@@ -58,7 +58,7 @@ const EventCard = ({ event, showClubInfo = true, className = '' }) => {
 
   const handleRegister = async (event_id) => {
     try {
-      const res = await fetch("http://localhost:5000/api/event/regev", {
+      const res = await fetch("http://nondan-backend.vercel.app/api/event/regev", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

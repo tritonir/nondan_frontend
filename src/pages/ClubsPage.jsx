@@ -19,7 +19,7 @@ const ClubsPage = () => {
     const fetchClubs = async () => {
       try {
         setLoading(true);
-        const res = await fetch('http://localhost:5000/api/club/');
+        const res = await fetch('http://nondan-backend.vercel.app/api/club/');
         if (!res.ok) {
           throw new Error('Failed to fetch clubs');
         }
@@ -114,11 +114,10 @@ const ClubsPage = () => {
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  selectedCategory === category
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedCategory === category
                     ? 'bg-[var(--primary-accent-1)] text-white'
                     : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
+                  }`}
               >
                 {category.charAt(0).toUpperCase() + category.slice(1)}
               </button>

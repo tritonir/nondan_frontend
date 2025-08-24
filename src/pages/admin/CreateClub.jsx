@@ -66,7 +66,7 @@ const CreateClub = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/club/', {
+      const response = await fetch('http://nondan-backend.vercel.app/api/club/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
