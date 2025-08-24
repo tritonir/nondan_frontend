@@ -3,7 +3,8 @@ import { toast } from 'react-toastify';
 
 const AuthContext = createContext();
 
-const API_BASE_URL = 'http://localhost:5000/api/user';
+
+const API_BASE_URL = 'https://nondan-backend.vercel.app/api/user';
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -44,7 +45,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/signin`, {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -99,7 +100,7 @@ export const AuthProvider = ({ children }) => {
   const signup = async (userData) => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/singup`, {
+      const response = await fetch(`${API_BASE_URL}/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
