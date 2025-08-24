@@ -89,7 +89,7 @@ const CreateEvent = () => {
         image_url: imageUrl,
         requirements: formData.requirements,
         certificate: formData.certificate,
-        club_id: "68ab5276a988b70d8fd7408d",
+        club_id: "68ab638e3460435081a05232",
       };
       console.log(body);
 
